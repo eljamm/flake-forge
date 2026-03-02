@@ -1,5 +1,6 @@
 {
   lib,
+  config,
   ...
 }:
 {
@@ -35,49 +36,10 @@
     };
 
     # Container configuration
-    containers = {
-      enable = lib.mkEnableOption ''
-        Container images output.
-      '';
-      images = lib.mkOption {
-        type = lib.types.listOf (
-          lib.types.submodule {
-            options = {
-              name = lib.mkOption {
-                type = lib.types.str;
-                default = "app-container";
-              };
-              requirements = lib.mkOption {
-                type = lib.types.listOf lib.types.package;
-                default = [ ];
-              };
-              config = {
-                CMD = lib.mkOption {
-                  type = lib.types.listOf lib.types.str;
-                  default = [ ];
-                };
-              };
-            };
-          }
-        );
-        default = [ ];
-        description = "List of container images to build.";
-        example = lib.literalExpression ''
-          [
-            {
-              name = "api";
-              requirements = [ mypkgs.my-package ];
-              config.CMD = [ "my-command" ];
-            }
-          ]
-        '';
-      };
-      composeFile = lib.mkOption {
-        type = lib.types.nullOr lib.types.path;
-        default = null;
-        description = "Relative path to a container compose file.";
-        example = "./compose.yaml";
-      };
+    containers = lib.mkOption {
+      type = lib.types.submodule ./containers;
+      default = { };
+      description = ""; # TODO:
     };
 
     # Virtual machine
@@ -140,5 +102,19 @@
         };
       };
     };
+
+    apply =
+      self:
+      let
+        appPassthru =
+          # finalApp parameter is currently not used in this function
+          app: finalApp:
+          { }
+          // lib.optionalAttrs app.containers.enable { containers = containerBundle app; }
+          // lib.optionalAttrs app.vm.enable { vm = nixosVm app; };
+      in
+      self.overrideAttrs (_: {
+        passthru = appPassthru app appDrv;
+      });
   };
 }
