@@ -11,7 +11,7 @@ let
 in
 {
   imports = [
-    ./assertions-warnings.nix
+    ../assertions-warnings.nix
   ];
 
   options = {
