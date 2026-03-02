@@ -42,22 +42,23 @@ in
               apply =
                 apps:
                 let
+                  appPassthru =
+                    # finalApp parameter is currently not used in this function
+                    app: finalApp:
+                    { }
+                    // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
+                    // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
+
                   shellBundle =
                     app:
                     let
-                      appPassthru =
-                        app: _finalApp:
-                        { }
-                        // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                        // lib.optionalAttrs app.vm.enable { vm = app.vm.build; };
-
                       appDrv = pkgs.symlinkJoin {
                         name = "${app.name}-${app.version}";
                         paths = app.programs.requirements;
                       };
                     in
-                    appDrv.overrideAttrs (oldAttrs: {
-                      passthru = oldAttrs.passthru or { } // appPassthru app appDrv;
+                    appDrv.overrideAttrs (_: {
+                      passthru = appPassthru app appDrv;
                     });
                 in
                 lib.listToAttrs (
