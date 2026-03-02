@@ -1,7 +1,6 @@
 {
-  inputs,
-  pkgs,
   lib,
+  inputs,
   flake-parts-lib,
   ...
 }:
@@ -18,51 +17,6 @@ in
     perSystem = mkPerSystemOption (
       { config, pkgs, ... }:
       let
-        nixosVm =
-          app:
-          let
-            forwardPortsAttrs =
-              ports:
-              map (
-                port:
-                let
-                  portSplit = lib.splitString ":" port;
-                in
-                {
-                  from = "host";
-                  host.port = lib.toInt (lib.elemAt portSplit 0);
-                  guest.port = lib.toInt (lib.elemAt portSplit 1);
-                }
-              ) ports;
-
-            vm = inputs.nixpkgs.lib.nixosSystem {
-              system = "x86_64-linux";
-              modules = [
-                (
-                  { pkgs, ... }:
-                  lib.recursiveUpdate {
-                    imports = [ "${inputs.nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix" ];
-                    users.users.root.password = "root";
-                    services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
-                    services.openssh.settings.PasswordAuthentication = lib.mkForce true;
-                    services.getty.autologinUser = "root";
-                    environment.systemPackages = app.vm.requirements;
-                    networking.hostName = app.vm.name;
-                    networking.useDHCP = lib.mkForce true;
-                    networking.firewall.enable = lib.mkForce false;
-                    virtualisation.graphics = false;
-                    virtualisation.cores = app.vm.config.cores;
-                    virtualisation.memorySize = app.vm.config.memorySize;
-                    virtualisation.diskSize = app.vm.config.diskSize;
-                    virtualisation.forwardPorts = forwardPortsAttrs app.vm.config.ports;
-                    system.stateVersion = "25.11";
-                  } app.vm.config.system
-                )
-              ];
-            };
-          in
-          vm.config.system.build.vm;
-
         cfg = config.forge;
       in
       {
@@ -82,6 +36,7 @@ in
                 lib.types.submodule {
                   imports = [ ./app.nix ];
                   _module.args.pkgs = pkgs;
+                  _module.args.inputs = inputs;
                 }
               );
               apply =
@@ -94,7 +49,7 @@ in
                         app: _finalApp:
                         { }
                         // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                        // lib.optionalAttrs app.vm.enable { vm = nixosVm app; };
+                        // lib.optionalAttrs app.vm.enable { vm = app.vm.build; };
 
                       appDrv = pkgs.symlinkJoin {
                         name = "${app.name}-${app.version}";

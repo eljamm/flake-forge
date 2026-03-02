@@ -3,7 +3,6 @@
   pkgs,
 
   app,
-  config,
   ...
 }:
 {
