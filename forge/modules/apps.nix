@@ -43,12 +43,10 @@ in
             shellBundle =
               app:
               let
-                appDrv = (
-                  pkgs.symlinkJoin {
-                    name = "${app.name}-${app.version}";
-                    paths = app.programs.requirements;
-                  }
-                );
+                appDrv = pkgs.symlinkJoin {
+                  name = "${app.name}-${app.version}";
+                  paths = app.programs.requirements;
+                };
               in
               # Passthru
               appDrv.overrideAttrs (_: {
