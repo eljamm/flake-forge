@@ -67,12 +67,12 @@
 
             # Start live-server
             echo "Starting live-server..."
-            live-server --host=127.0.0.1 --port=8080 --open=/index.html src/ &
+            live-server --host=127.0.0.1 --port=9999 --open=/index.html src/ &
             LIVE_SERVER_PID=$!
 
             echo
             echo "Development server is running!"
-            echo "  Live server: http://127.0.0.1:8080/index.html"
+            echo "  Live server: http://127.0.0.1:9999/index.html"
             echo
             echo "Press Ctrl+C to stop all watchers and the server."
             echo
