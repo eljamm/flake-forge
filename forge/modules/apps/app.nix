@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  pkgs,
   ...
 }:
 {
@@ -37,7 +38,11 @@
 
     # Container configuration
     containers = lib.mkOption {
-      type = lib.types.submodule ./containers;
+      type = lib.types.submodule {
+        imports = [ ./containers ];
+        _module.args.app = config;
+        _module.args.pkgs = pkgs;
+      };
       default = { };
       description = ""; # TODO:
     };
@@ -102,19 +107,5 @@
         };
       };
     };
-
-    apply =
-      self:
-      let
-        appPassthru =
-          # finalApp parameter is currently not used in this function
-          app: finalApp:
-          { }
-          // lib.optionalAttrs app.containers.enable { containers = containerBundle app; }
-          // lib.optionalAttrs app.vm.enable { vm = nixosVm app; };
-      in
-      self.overrideAttrs (_: {
-        passthru = appPassthru app appDrv;
-      });
   };
 }
