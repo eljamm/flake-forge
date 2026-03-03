@@ -12,13 +12,13 @@
       type = lib.types.str;
       default = "my-application";
     };
-    description = lib.mkOption {
-      type = lib.types.str;
-      default = "";
-    };
     version = lib.mkOption {
       type = lib.types.str;
       default = "1.0.0";
+    };
+    description = lib.mkOption {
+      type = lib.types.str;
+      default = "";
     };
     usage = lib.mkOption {
       type = lib.types.str;
@@ -34,6 +34,7 @@
       requirements = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         default = [ ];
+        description = ""; # TODO:
       };
     };
 

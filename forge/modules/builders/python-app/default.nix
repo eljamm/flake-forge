@@ -1,13 +1,13 @@
 {
-  inputs,
-  config,
   lib,
   flake-parts-lib,
   ...
 }:
 
 let
-  inherit (flake-parts-lib) mkPerSystemOption;
+  inherit (flake-parts-lib)
+    mkPerSystemOption
+    ;
 in
 {
   options = {
