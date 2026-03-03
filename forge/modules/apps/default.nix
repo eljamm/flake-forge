@@ -46,13 +46,6 @@ in
         config = {
           packages =
             let
-              appPassthru =
-                # finalApp parameter is currently not used in this function
-                app: finalApp:
-                { }
-                // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
-
               shellBundle =
                 app:
                 let
@@ -61,9 +54,14 @@ in
                     paths = app.programs.requirements;
                   };
                 in
-                appDrv.overrideAttrs (oldAttrs: {
-                  passthru = oldAttrs.passthru or { } // appPassthru app appDrv;
-                });
+                appDrv.overrideAttrs (
+                  finalAttrs: oldAttrs: {
+                    passthru =
+                      oldAttrs.passthru or { }
+                      // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
+                      // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
+                  }
+                );
 
               allApps = lib.listToAttrs (
                 map (app: {
