@@ -24,8 +24,21 @@ let
       default # recurse scope
       ;
 
+    debug = eval {
+      imports = [
+        ./forge/flake-module.nix
+        ./flake/develop.nix
+        ./flake/checks.nix
+        # ./flake/templates.nix
+      ];
+
+      _module.args.rootPath = ./.;
+      _module.args.inputs = inputs;
+      _module.args.flake-parts-lib = inputs.flake-parts.lib;
+    };
   });
 
+  eval = module: (lib.evalModules { modules = [ module ]; });
   call = default.callPackage;
 in
 default
