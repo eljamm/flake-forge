@@ -44,7 +44,7 @@ in
                 Each package uses one of the available builders.
                 Only one builder can be enabled per package by setting build.<builder>.enable = true.
               '';
-              type = lib.types.listOf (lib.types.submodule ./package.nix);
+              type = lib.types.listOf (lib.types.submodule ./package-item.nix);
             };
           };
         };
