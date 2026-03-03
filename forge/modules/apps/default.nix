@@ -39,40 +39,40 @@ in
                   _module.args.inputs = inputs;
                 }
               );
-              apply =
-                apps:
-                let
-                  appPassthru =
-                    # finalApp parameter is currently not used in this function
-                    app: finalApp:
-                    { }
-                    // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                    // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
-
-                  shellBundle =
-                    app:
-                    let
-                      appDrv = pkgs.symlinkJoin {
-                        name = "${app.name}-${app.version}";
-                        paths = app.programs.requirements;
-                      };
-                    in
-                    appDrv.overrideAttrs (_: {
-                      passthru = appPassthru app appDrv;
-                    });
-                in
-                lib.listToAttrs (
-                  map (app: {
-                    name = "${app.name}";
-                    value = shellBundle app;
-                  }) apps
-                );
             };
           };
         };
 
         config = {
-          packages = cfg.apps;
+          packages =
+            let
+              appPassthru =
+                # finalApp parameter is currently not used in this function
+                app: finalApp:
+                { }
+                // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
+                // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
+
+              shellBundle =
+                app:
+                let
+                  appDrv = pkgs.symlinkJoin {
+                    name = "${app.name}-${app.version}";
+                    paths = app.programs.requirements;
+                  };
+                in
+                appDrv.overrideAttrs (oldAttrs: {
+                  passthru = oldAttrs.passthru or { } // appPassthru app appDrv;
+                });
+
+              allApps = lib.listToAttrs (
+                map (app: {
+                  name = "${app.name}";
+                  value = shellBundle app;
+                }) cfg.apps
+              );
+            in
+            allApps;
 
           forge.appsFilter = lib.mkDefault {
             programs = [
