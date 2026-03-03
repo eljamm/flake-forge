@@ -12,7 +12,11 @@ in
 {
   options = {
     perSystem = mkPerSystemOption (
-      { config, pkgs, ... }:
+      {
+        config,
+        pkgs,
+        ...
+      }:
       let
         # Define shared build attributes here so they can be passed via _module.args
         sharedBuildAttrs = {
