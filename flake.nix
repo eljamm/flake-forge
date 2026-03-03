@@ -56,9 +56,18 @@
       flake.flakeModules.default = import ./forge/flake-module.nix { inherit inputs; };
 
       perSystem =
-        { ... }:
+        { lib, ... }:
         {
-          forge = {
+          options.dev = lib.mkOption {
+            type = lib.types.anything;
+            default = { };
+            description = "Contains attributes for debugging and development.";
+          };
+
+          # lib = allSystems.x86_64-linux.dev.lib
+          config.dev = { inherit lib; };
+
+          config.forge = {
             repositoryUrl = "github:imincik/nix-forge";
             recipeDirs = {
               packages = "recipes/packages";
