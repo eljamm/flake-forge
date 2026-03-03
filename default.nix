@@ -26,10 +26,13 @@ let
 
     debug = eval {
       imports = [
-        ./forge/flake-module.nix
-        ./flake/develop.nix
-        ./flake/checks.nix
+        # ./forge/flake-module.nix
+        # ./flake/develop.nix
+        # ./flake/checks.nix
         # ./flake/templates.nix
+
+        ./_forge/flake-module.nix
+        ./_forge/modules/flake-module.nix
       ];
 
       _module.args.rootPath = ./.;
