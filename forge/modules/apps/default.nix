@@ -6,7 +6,9 @@
 }:
 
 let
-  inherit (flake-parts-lib) mkPerSystemOption;
+  inherit (flake-parts-lib)
+    mkPerSystemOption
+    ;
 in
 {
   imports = [
@@ -15,10 +17,11 @@ in
 
   options = {
     perSystem = mkPerSystemOption (
-      { config, pkgs, ... }:
-      let
-        cfg = config.forge;
-      in
+      {
+        config,
+        pkgs,
+        ...
+      }:
       {
         options = {
           forge = {
@@ -32,6 +35,7 @@ in
             apps = lib.mkOption {
               default = [ ];
               description = "List of applications.";
+              # TODO: attrs instead of list?
               type = lib.types.listOf (
                 lib.types.submodule {
                   imports = [ ./app.nix ];
@@ -55,7 +59,7 @@ in
                   };
                 in
                 appDrv.overrideAttrs (
-                  finalAttrs: oldAttrs: {
+                  _: oldAttrs: {
                     passthru =
                       oldAttrs.passthru or { }
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
@@ -67,7 +71,7 @@ in
                 map (app: {
                   name = "${app.name}";
                   value = shellBundle app;
-                }) cfg.apps
+                }) config.forge.apps
               );
             in
             allApps;
