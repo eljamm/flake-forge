@@ -14,7 +14,7 @@ in
     ./assertions-warnings.nix
     ./builders/shared.nix
     ./builders/standard-builder.nix
-    ./builders/python-app-builder.nix
+    ./builders/python-app
     ./builders/python-package-builder.nix
   ];
 
