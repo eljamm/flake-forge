@@ -32,31 +32,30 @@
     ```
   '';
 
-  programs = {
-    enable = true;
-    requirements = [
-      pkgs.curl
-    ];
+  services = {
+    api = {
+      process.argv = [ (lib.getExe pkgs.mypkgs.python-web) ];
+      requirements = [
+        pkgs.mypkgs.python-web
+        pkgs.curl
+      ];
+    };
   };
 
   containers = {
     enable = true;
-    images = [
-      {
+    settings = {
+      container = {
         name = "api";
-        requirements = [ pkgs.mypkgs.python-web ];
-        config.CMD = [
-          "python-web"
-        ];
-      }
-    ];
-    composeFile = ./compose.yaml;
+        copyToRoot = [ pkgs.mypkgs.python-web ];
+      };
+    };
   };
 
-  vm = {
+  nixos = {
     enable = true;
     name = "database";
-    config.system = {
+    extraConfig = {
       # database service
       services.postgresql.enable = true;
       services.postgresql.enableTCPIP = true;
@@ -71,7 +70,7 @@
         "multi-user.target"
       ];
     };
-    config.ports = [
+    vm.ports = [
       "5000:5000"
     ];
   };

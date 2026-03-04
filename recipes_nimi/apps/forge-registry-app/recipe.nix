@@ -39,71 +39,77 @@
     ```
   '';
 
-  programs = {
-    enable = true;
-    requirements = [
-      pkgs.mypkgs.forge-registry
-    ];
+  # Portable services configuration (new interface)
+  services = {
+    registry = {
+      process.argv = [ (lib.getExe pkgs.mypkgs.forge-registry) ];
+      configData = {
+        "registry.conf" = {
+          text = ''
+            FLASK_HOST=0.0.0.0
+            FLASK_PORT=6443
+            GITHUB_REPO=github:imincik/nix-forge
+            LOG_LEVEL=INFO
+          '';
+        };
+      };
+      requirements = [
+        pkgs.mypkgs.forge-registry
+      ];
+    };
   };
 
-  # TODO: enable container (requires nix to run in a container)
-  # containers = {
-  #   images = [
-  #     {
-  #       name = "forge-registry";
-  #       requirements = [
-  #         pkgs.mypkgs.forge-registry
-  #         pkgs.nix
-  #       ];
-  #       config.CMD = [ "forge-registry" ];
-  #     }
-  #   ];
-  #   composeFile = ./compose.yaml;
-  # };
+  containers = {
+    enable = true;
+    settings = {
+      container = {
+        name = "forge-registry";
+        copyToRoot = [
+          pkgs.mypkgs.forge-registry
+          pkgs.nix
+        ];
+      };
+    };
+  };
 
-  # TODO: enable VM
-  # vm = {
-  #   enable = true;
-  #   name = "forge-registry";
-  #   requirements = [
-  #     pkgs.mypkgs.forge-registry
-  #     pkgs.nix
-  #   ];
-  #   config = {
-  #     ports = [ "6443:6443" ];
-  #     system = {
-  #       systemd.services.forge-registry = {
-  #         description = "Nix Forge container registry";
-  #         wantedBy = [ "multi-user.target" ];
-  #         after = [ "network.target" ];
-  #         environment = {
-  #           FLASK_HOST = "0.0.0.0";
-  #           FLASK_PORT = "6443";
-  #           GITHUB_REPO = "github:imincik/nix-forge";
-  #           LOG_LEVEL = "INFO";
-  #         };
-  #         serviceConfig = {
-  #           Type = "simple";
-  #           ExecStart = "${pkgs.mypkgs.forge-registry}/bin/forge-registry";
-  #           Restart = "on-failure";
-  #           RestartSec = "5s";
-  #         };
-  #         path = [ pkgs.nix ];
-  #       };
-  #       nix.settings = {
-  #         trusted-users = [
-  #           "root"
-  #           "@wheel"
-  #           "@trusted"
-  #         ];
-  #         experimental-features = [
-  #           "flakes"
-  #           "nix-command"
-  #         ];
-  #       };
-  #     };
-  #     memorySize = 1024 * 4;
-  #     diskSize = 1024 * 10;
-  #   };
-  # };
+  nixos = {
+    enable = true;
+    name = "forge-registry";
+    extraConfig = {
+      systemd.services.forge-registry = {
+        description = "Nix Forge container registry";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network.target" ];
+        environment = {
+          FLASK_HOST = "0.0.0.0";
+          FLASK_PORT = "6443";
+          GITHUB_REPO = "github:imincik/nix-forge";
+          LOG_LEVEL = "INFO";
+        };
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.mypkgs.forge-registry}/bin/forge-registry";
+          Restart = "on-failure";
+          RestartSec = "5s";
+        };
+        path = [ pkgs.nix ];
+      };
+      nix.settings = {
+        trusted-users = [
+          "root"
+          "@wheel"
+          "@trusted"
+        ];
+        experimental-features = [
+          "flakes"
+          "nix-command"
+        ];
+      };
+    };
+    vm = {
+      ports = [ "6443:6443" ];
+      memorySize = 1024 * 4;
+      diskSize = 1024 * 10;
+    };
+  };
 }

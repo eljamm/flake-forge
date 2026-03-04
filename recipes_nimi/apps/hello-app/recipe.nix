@@ -10,44 +10,40 @@
   version = "1.0.0";
   description = "Say hello in multiple languages.";
 
-  programs = {
-    enable = true;
-    requirements = [
-      pkgs.mypkgs.hello
-    ];
+  services = {
+    hello-english = {
+      process.argv = [
+        (lib.getExe pkgs.mypkgs.hello)
+        "--greeting"
+        "Hello"
+      ];
+      requirements = [ pkgs.mypkgs.hello ];
+    };
+    hello-italian = {
+      process.argv = [
+        (lib.getExe pkgs.mypkgs.hello)
+        "--greeting"
+        "Ciao"
+      ];
+      requirements = [ pkgs.mypkgs.hello ];
+    };
+    hello-spanish = {
+      process.argv = [
+        (lib.getExe pkgs.mypkgs.hello)
+        "--greeting"
+        "Hola"
+      ];
+      requirements = [ pkgs.mypkgs.hello ];
+    };
   };
 
   containers = {
     enable = true;
-    images = [
-      {
-        name = "hello-english";
-        requirements = [ pkgs.mypkgs.hello ];
-        config.CMD = [
-          "hello"
-          "--greeting"
-          "Hello"
-        ];
-      }
-      {
-        name = "hello-italian";
-        requirements = [ pkgs.mypkgs.hello ];
-        config.CMD = [
-          "hello"
-          "--greeting"
-          "Ciao"
-        ];
-      }
-      {
-        name = "hello-spanish";
-        requirements = [ pkgs.mypkgs.hello ];
-        config.CMD = [
-          "hello"
-          "--greeting"
-          "Hola"
-        ];
-      }
-    ];
-    composeFile = ./compose.yaml;
+    settings = {
+      container = {
+        name = "hello-app";
+        copyToRoot = [ pkgs.mypkgs.hello ];
+      };
+    };
   };
 }
