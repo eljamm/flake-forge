@@ -26,28 +26,28 @@ in
           recipeDirs = {
             packages = lib.mkOption {
               type = lib.types.nullOr lib.types.str;
-              default = "recipes/packages";
+              default = "recipes_nimi/packages";
               description = ''
                 Directory containing package recipe files.
                 Each recipe should be a recipe.nix file in a subdirectory
-                (e.g., recipes/packages/hello/recipe.nix).
+                (e.g., recipes_nimi/packages/hello/recipe.nix).
 
                 Set to null to disable automatic package recipe loading.
               '';
-              example = "recipes/packages";
+              example = "recipes_nimi/packages";
             };
 
             apps = lib.mkOption {
               type = lib.types.nullOr lib.types.str;
-              default = "recipes/apps";
+              default = "recipes_nimi/apps";
               description = ''
                 Directory containing app recipe files.
                 Each recipe should be a recipe.nix file in a subdirectory
-                (e.g., recipes/apps/my-app/recipe.nix).
+                (e.g., recipes_nimi/apps/my-app/recipe.nix).
 
                 Set to null to disable automatic app recipe loading.
               '';
-              example = "recipes/apps";
+              example = "recipes_nimi/apps";
             };
           };
         };

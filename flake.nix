@@ -47,8 +47,8 @@
       ];
 
       imports = [
-        ./forge/flake-module.nix
-        ./forge_2/flake-module.nix
+        # ./forge/flake-module.nix
+        ./forge_nimi/flake-module.nix
         ./flake/develop.nix
         ./flake/checks.nix
         ./flake/templates.nix

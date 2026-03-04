@@ -1,94 +1,95 @@
 {
   lib,
   pkgs,
-
+  inputs,
   app,
   ...
 }:
 {
   options = {
     enable = lib.mkEnableOption ''
-      Container images output.
+      Container images output using Nimi.
     '';
-    images = lib.mkOption {
-      type = lib.types.listOf (
-        lib.types.submodule {
-          options = {
-            name = lib.mkOption {
-              type = lib.types.str;
-              default = "app-container";
-            };
-            requirements = lib.mkOption {
-              type = lib.types.listOf lib.types.package;
-              default = [ ];
-            };
-            config = {
-              CMD = lib.mkOption {
-                type = lib.types.listOf lib.types.str;
-                default = [ ];
+
+    settings = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          container = lib.mkOption {
+            type = lib.types.submodule {
+              options = {
+                name = lib.mkOption {
+                  type = lib.types.str;
+                  default = "nimi-container";
+                  description = "The name of the generated image.";
+                };
+                tag = lib.mkOption {
+                  type = lib.types.str;
+                  default = "latest";
+                  description = "The tag for the generated image.";
+                };
+                fromImage = lib.mkOption {
+                  type = lib.types.nullOr lib.types.path;
+                  default = null;
+                  description = "An image that is used as base image.";
+                };
+                copyToRoot = lib.mkOption {
+                  type = lib.types.listOf lib.types.path;
+                  default = [ ];
+                  description = "A list of derivations to copy to the image root.";
+                };
+                imageConfig = lib.mkOption {
+                  type = lib.types.attrsOf lib.types.anything;
+                  default = { };
+                  description = "OCI image configuration.";
+                };
+                maxLayers = lib.mkOption {
+                  type = lib.types.int;
+                  default = 1;
+                  description = "Maximum number of layers to create.";
+                };
               };
             };
+            default = { };
+            description = "Nimi container settings.";
+          };
+        };
+      };
+      default = { };
+      description = "Nimi container settings.";
+      example = lib.literalExpression ''
+        {
+          container = {
+            name = "my-app";
+            tag = "v1.0";
+            copyToRoot = [ pkgs.hello ];
           };
         }
-      );
-      default = [ ];
-      description = "List of container images to build.";
-      example = lib.literalExpression ''
-        [
-          {
-            name = "api";
-            requirements = [ mypkgs.my-package ];
-            config.CMD = [ "my-command" ];
-          }
-        ]
       '';
     };
-    composeFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Relative path to a container compose file.";
-      example = "./compose.yaml";
+
+    extraConfig = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
+      default = { };
+      description = "Arbitrary additional system specific configuration.";
     };
 
     build = lib.mkOption {
       internal = true;
       readOnly = true;
       type = lib.types.package;
-      default =
-        let
-          buildImage =
-            image:
-            pkgs.dockerTools.buildImage {
-              name = image.name;
-              tag = "latest";
-              copyToRoot = pkgs.buildEnv {
-                name = "image-root";
-                paths = image.requirements;
-                pathsToLink = [ "/bin" ];
-              };
-              config = {
-                Cmd = image.config.CMD;
-              };
-            };
-        in
-        pkgs.linkFarm "${app.name}-${app.version}" (
-          # Container images
-          (map (image: {
-            name = "${image.name}.tar.gz";
-            path = buildImage image;
-          }) app.containers.images)
-          # Compose file (optional)
-          ++ lib.optionals (app.containers.composeFile != null) [
-            {
-              name = "compose.yaml";
-              path = pkgs.writeTextFile {
-                name = "compose.yaml";
-                text = builtins.readFile app.containers.composeFile;
-              };
-            }
-          ]
-        );
-      description = ""; # TODO:
+      description = "Built container image.";
     };
+  };
+
+  config = lib.mkIf app.containers.enable {
+    build =
+      let
+        cfg = app.containers;
+        containerSettings = cfg.settings.container or { };
+      in
+      pkgs.runCommand "${app.name}-container" { } ''
+        echo "Building container with Nimi settings"
+        mkdir -p $out
+      '';
   };
 }

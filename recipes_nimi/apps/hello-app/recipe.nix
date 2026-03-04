@@ -8,7 +8,7 @@
 {
   name = "hello-app";
   version = "1.0.0";
-  description = "Hello application demonstrating the new forge_2 interface.";
+  description = "Hello application demonstrating the new forge_nimi interface.";
 
   services.hello = {
     process.argv = [
@@ -17,7 +17,7 @@
       "Hello"
     ];
     configData."greetings.txt" = {
-      text = "Hello from forge_2!\n";
+      text = "Hello from forge_nimi!\n";
     };
   };
 

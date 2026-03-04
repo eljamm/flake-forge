@@ -35,7 +35,6 @@ in
             apps = lib.mkOption {
               default = [ ];
               description = "List of applications.";
-              # TODO: attrs instead of list?
               type = lib.types.listOf (
                 lib.types.submodule {
                   imports = [ ./app-item.nix ];
@@ -55,7 +54,7 @@ in
                 let
                   appDrv = pkgs.symlinkJoin {
                     name = "${app.name}-${app.version}";
-                    paths = app.programs.requirements;
+                    paths = [ ];
                   };
                 in
                 appDrv.overrideAttrs (
@@ -63,7 +62,7 @@ in
                     passthru =
                       oldAttrs.passthru or { }
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                      // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
+                      // lib.optionalAttrs app.nixos.enable { vm = app.nixos.build; };
                   }
                 );
 
@@ -77,30 +76,28 @@ in
             allApps;
 
           forge.appsFilter = lib.mkDefault {
-            programs = [
+            services = [
               "apps.*.name"
               "apps.*.version"
-              "apps.*.programs.enable"
-              "apps.*.programs.requirements"
+              "apps.*.services"
             ];
             containers = [
               "apps.*.name"
               "apps.*.version"
               "apps.*.containers.enable"
-              "apps.*.containers.images"
-              "apps.*.containers.composeFile"
+              "apps.*.containers.settings"
+              "apps.*.containers.extraConfig"
             ];
-            vm = [
+            nixos = [
               "apps.*.name"
               "apps.*.version"
-              "apps.*.vm.enable"
-              "apps.*.vm.name"
-              "apps.*.vm.requirements"
-              "apps.*.vm.config.system"
-              "apps.*.vm.config.ports"
-              "apps.*.vm.config.cores"
-              "apps.*.vm.config.memorySize"
-              "apps.*.vm.config.diskSize"
+              "apps.*.nixos.enable"
+              "apps.*.nixos.settings"
+              "apps.*.nixos.extraConfig"
+              "apps.*.nixos.vm.cores"
+              "apps.*.nixos.vm.memorySize"
+              "apps.*.nixos.vm.diskSize"
+              "apps.*.nixos.vm.ports"
             ];
           };
         };
