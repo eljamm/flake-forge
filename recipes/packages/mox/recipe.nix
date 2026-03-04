@@ -79,12 +79,17 @@
                 };
               };
 
+              configData."config/mox.conf" = {
+              }
+              // lib.optionalAttrs (options ? systemd) {
+                path = "/var/lib/mox/config/mox.conf";
+              };
+
               config = {
                 process.argv = [
                   (lib.getExe cfg.package)
                   "-config"
-                  # TODO: use configData
-                  "/var/lib/mox/config/mox.conf"
+                  config.configData."config/mox.conf".path
                   "serve"
                 ];
 
