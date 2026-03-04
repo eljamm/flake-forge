@@ -35,7 +35,6 @@ in
             apps = lib.mkOption {
               default = [ ];
               description = "List of applications.";
-              # TODO: attrs instead of list?
               type = lib.types.listOf (
                 lib.types.submodule {
                   imports = [ ./app-item.nix ];
@@ -50,20 +49,33 @@ in
         config = {
           packages =
             let
+              aggregateRequirements =
+                app:
+                let
+                  # Get requirements from legacy programs option
+                  programReqs = app.programs.requirements or [ ];
+                  # Get requirements from new services option
+                  serviceReqs = lib.flatten (
+                    lib.mapAttrsToList (name: service: service.requirements or [ ]) (app.services or { })
+                  );
+                in
+                programReqs ++ serviceReqs;
+
               shellBundle =
                 app:
                 let
+                  reqs = aggregateRequirements app;
                   appDrv = pkgs.symlinkJoin {
                     name = "${app.name}-${app.version}";
-                    paths = app.programs.requirements;
+                    paths = reqs;
                   };
                 in
                 appDrv.overrideAttrs (
                   _: oldAttrs: {
                     passthru =
                       oldAttrs.passthru or { }
-                      // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                      // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
+                      // lib.optionalAttrs (app.containers.enable or false) { containers = app.containers.build; }
+                      // lib.optionalAttrs (app.nixos.enable or false) { nixos = app.nixos.build; };
                   }
                 );
 
@@ -77,30 +89,37 @@ in
             allApps;
 
           forge.appsFilter = lib.mkDefault {
+            # Legacy programs option (backward compatibility)
             programs = [
               "apps.*.name"
               "apps.*.version"
               "apps.*.programs.enable"
               "apps.*.programs.requirements"
             ];
+            # New portable services option
+            services = [
+              "apps.*.name"
+              "apps.*.version"
+              "apps.*.services"
+            ];
             containers = [
               "apps.*.name"
               "apps.*.version"
               "apps.*.containers.enable"
-              "apps.*.containers.images"
-              "apps.*.containers.composeFile"
+              "apps.*.containers.settings"
+              "apps.*.containers.extraConfig"
             ];
-            vm = [
+            nixos = [
               "apps.*.name"
               "apps.*.version"
-              "apps.*.vm.enable"
-              "apps.*.vm.name"
-              "apps.*.vm.requirements"
-              "apps.*.vm.config.system"
-              "apps.*.vm.config.ports"
-              "apps.*.vm.config.cores"
-              "apps.*.vm.config.memorySize"
-              "apps.*.vm.config.diskSize"
+              "apps.*.nixos.enable"
+              "apps.*.nixos.name"
+              "apps.*.nixos.settings"
+              "apps.*.nixos.extraConfig"
+              "apps.*.nixos.vm.cores"
+              "apps.*.nixos.vm.memorySize"
+              "apps.*.nixos.vm.diskSize"
+              "apps.*.nixos.vm.ports"
             ];
           };
         };
