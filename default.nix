@@ -48,11 +48,13 @@ let
       _module.args.flake-parts-lib = inputs.flake-parts.lib;
     };
 
+    output = flake.outputs.allSystems.x86_64-linux;
+
     apps = lib.listToAttrs (
       map (v: {
         name = v.name;
         value = v;
-      }) flake.outputs.allSystems.x86_64-linux.forge.apps
+      }) default.output.forge.apps
     );
   });
 
