@@ -15,6 +15,7 @@ Re-implement current Nix Forge application configuration to use portable applica
 - services.\<name>: https://nixos.org/manual/nixos/unstable/#service-opt-services
   - process.argv: https://nixos.org/manual/nixos/unstable/#service-opt-process.argv
   - configData: https://nixos.org/manual/nixos/unstable/#service-opt-configData
+  - requirements: list of Nix packages required by this service (used to build appDrv)
 
 ### Specific options
 
@@ -46,10 +47,10 @@ Re-implement current Nix Forge application configuration to use portable applica
 
 Add `nimi` flake input to `flake.nix` pointing to `github:weyl-ai/nimi`
 
-### Phase 2: Create New `forge_2` Directory Structure
+### Phase 2: Create New `forge_nimi` Directory Structure
 
 ```
-forge_2/
+forge_nimi/
 ├── flake-module.nix      # New flake module entry point
 ├── modules/
 │   └── apps/
@@ -60,7 +61,7 @@ forge_2/
 └── packages.nix         # (if needed)
 ```
 
-### Phase 3: Implement New App Options (`forge_2/modules/apps/app.nix`)
+### Phase 3: Implement New App Options (`forge_nimi/modules/apps/app.nix`)
 
 **Portable services (replaces `programs`):**
 
@@ -68,6 +69,7 @@ forge_2/
 services.<name> = {
   process.argv = [ (lib.getExe pkgs.mypkgs.some-package) "--flag" ];
   configData."config.conf" = { text = "port=8080"; };
+  requirements = [ pkgs.mypkgs.some-package ];  # Nix packages to bundle in appDrv
 };
 ```
 
@@ -99,19 +101,28 @@ nixos = {
 };
 ```
 
-### Phase 4: Implement Build Logic (`forge_2/modules/apps/default.nix`)
+### Phase 4: Implement Build Logic (`forge_nimi/modules/apps/default.nix`)
 
 - Add `nimi` to module args
 - Implement build logic using Nimi module outputs
+- Aggregate all `services.*.requirements` from all services to build appDrv
 - Update `appsFilter` for new option paths:
-  - `services.*.process.argv`, `services.*.configData`
+  - `services.*.process.argv`, `services.*.configData`, `services.*.requirements`
   - `containers.enable`, `containers.settings`, `containers.extraConfig`
   - `nixos.enable`, `nixos.settings`, `nixos.extraConfig`, `nixos.vm.*`
 
 ### Phase 5: Update Main Flake (`flake.nix`)
 
-- Import `forge_2/flake-module.nix` alongside existing forge module
-- This allows comparing both implementations
+- Import `forge_nimi/flake-module.nix` alongside existing forge module
+- This allows comparing both implementations during the spike
+- The existing `programs` option remains functional for backward compatibility
+- Decision on full migration will be made after spike goals are evaluated
+
+## Backward Compatibility
+
+- Existing recipes using `programs` continue to work unchanged
+- New recipes can use either `programs` (legacy) or `services` (new portable design)
+- Goal: Support both during transition period, then deprecate `programs`
 
 ## TODO
 
