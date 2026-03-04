@@ -128,30 +128,26 @@
   };
 
   config = lib.mkIf config.enable {
-    vm.eval = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        (
-          {
-            pkgs,
-            ...
-          }:
-          let
-            forwardPortsAttrs =
-              ports:
-              map (
-                port:
-                let
-                  portSplit = lib.splitString ":" port;
-                in
-                {
-                  from = "host";
-                  host.port = lib.toInt (lib.elemAt portSplit 0);
-                  guest.port = lib.toInt (lib.elemAt portSplit 1);
-                }
-              ) ports;
-          in
-          lib.recursiveUpdate {
+    vm.eval =
+      let
+        forwardPortsAttrs =
+          ports:
+          map (
+            port:
+            let
+              portSplit = lib.splitString ":" port;
+            in
+            {
+              from = "host";
+              host.port = lib.toInt (lib.elemAt portSplit 0);
+              guest.port = lib.toInt (lib.elemAt portSplit 1);
+            }
+          ) ports;
+      in
+      inputs.nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          (lib.recursiveUpdate {
             imports = [ "${inputs.nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix" ];
             users.users.root.password = "root";
             services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
@@ -168,9 +164,8 @@
             virtualisation.forwardPorts = forwardPortsAttrs app.vm.config.ports;
             system.stateVersion = "25.11";
             passthru = { }; # FIX: why is this required?
-          } app.vm.config.system
-        )
-      ];
-    };
+          } app.vm.config.system)
+        ];
+      };
   };
 }
