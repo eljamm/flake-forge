@@ -47,6 +47,13 @@ let
       _module.args.inputs = inputs;
       _module.args.flake-parts-lib = inputs.flake-parts.lib;
     };
+
+    apps = lib.listToAttrs (
+      map (v: {
+        name = v.name;
+        value = v;
+      }) flake.outputs.allSystems.x86_64-linux.forge.apps
+    );
   });
 
   eval = module: (lib.evalModules { modules = [ module ]; });
