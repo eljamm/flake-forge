@@ -65,7 +65,7 @@ in
                     passthru =
                       oldAttrs.passthru or { }
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                      // lib.optionalAttrs app.vm.enable { vm = app.containers.build; }
+                      // lib.optionalAttrs app.nixos.enable { vm = app.nixos.vm.build; }
                       // lib.optionalAttrs app.nixos.enable {
                         nimi = nimi.mkContainerImage { inherit (app) services; };
                         nimi-bin = nimi.mkNimiBin { inherit (app) services; };
