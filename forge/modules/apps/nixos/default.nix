@@ -1,0 +1,114 @@
+{
+  lib,
+  inputs,
+
+  app,
+  ...
+}:
+{
+  options = {
+    enable = lib.mkEnableOption ''
+      NixOS/VM output.
+    '';
+
+    name = lib.mkOption {
+      type = lib.types.str;
+      default = "nixos-vm";
+      description = "Hostname for the VM.";
+    };
+
+    # Legacy: requirements option for backward compatibility
+    requirements = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = [ ];
+      description = "Nix packages to include in the VM.";
+    };
+
+    config = {
+      system = lib.mkOption {
+        type = lib.types.attrsOf lib.types.anything;
+        default = { };
+        description = ''
+          NixOS system configuration (legacy format).
+
+          See: https://search.nixos.org/options
+        '';
+        example = lib.literalExpression ''
+          {
+            services.postgresql.enable = true;
+          }
+        '';
+      };
+      ports = lib.mkOption {
+        type = lib.types.listOf (lib.types.strMatching "^[0-9]*:[0-9]*$");
+        default = [ ];
+        description = ''
+          List of ports to forward from host system to VM.
+
+          Format: HOST_PORT:VM_PORT
+        '';
+        example = lib.literalExpression ''
+          [ "10022:22" "5432:5432" "8000:90" ]
+        '';
+      };
+    };
+
+    settings = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
+      default = { };
+      description = "Nimi settings for the NixOS configuration.";
+      example = lib.literalExpression ''
+        {
+          restart.mode = "always";
+          restart.time = 1000;
+          logging.enable = true;
+        }
+      '';
+    };
+
+    extraConfig = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
+      default = { };
+      description = "Arbitrary additional NixOS system configuration.";
+      example = lib.literalExpression ''
+        {
+          services.postgresql.enable = true;
+          services.openssh.enable = true;
+        }
+      '';
+    };
+
+    vm = {
+      cores = lib.mkOption {
+        type = lib.types.int;
+        default = 4;
+        description = "Number of CPU cores available to VM.";
+        example = 8;
+      };
+      memorySize = lib.mkOption {
+        type = lib.types.int;
+        default = 1024 * 2;
+        description = "VM memory size in MB.";
+        example = 1024 * 4;
+      };
+      diskSize = lib.mkOption {
+        type = lib.types.int;
+        default = 1024 * 4;
+        description = "VM disk size in MB.";
+        example = 1024 * 10;
+      };
+      ports = lib.mkOption {
+        type = lib.types.listOf (lib.types.strMatching "^[0-9]*:[0-9]*$");
+        default = [ ];
+        description = ''
+          List of ports to forward from host system to VM.
+
+          Format: HOST_PORT:VM_PORT
+        '';
+        example = lib.literalExpression ''
+          [ "10022:22" "5432:5432" "8000:80" ]
+        '';
+      };
+    };
+  };
+}

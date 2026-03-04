@@ -62,6 +62,17 @@
       '';
     };
 
+    # NixOS/VM configuration
+    nixos = lib.mkOption {
+      type = lib.types.submodule {
+        imports = [ ./nixos ];
+        _module.args.app = config;
+        _module.args.inputs = inputs;
+      };
+      default = { };
+      description = ""; # TODO:
+    };
+
     # Container configuration
     containers = lib.mkOption {
       type = lib.types.submodule {

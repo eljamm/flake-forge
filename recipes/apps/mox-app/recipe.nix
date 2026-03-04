@@ -50,6 +50,18 @@
   #   extraConfig = { };
   # };
 
+  nixos = {
+    enable = true;
+    settings = { }; # Nimi settings
+    extraConfig = { }; # arbitrary NixOS config
+    vm = {
+      cores = 4;
+      diskSize = 4096;
+      memorySize = 2048;
+      ports = [ "8080:80" ];
+    };
+  };
+
   # nixos = {
   #   enable = true;
   #   settings = { };

@@ -66,9 +66,7 @@ in
                       oldAttrs.passthru or { }
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
                       // lib.optionalAttrs app.vm.enable { vm = app.containers.build; }
-                      // {
-                        nimi = app.services.build;
-                      };
+                      // lib.optionalAttrs app.nixos.enable { nimi = app.services.build; };
                   }
                 );
 
