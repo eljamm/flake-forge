@@ -72,8 +72,8 @@
           config.forge = {
             repositoryUrl = "github:imincik/nix-forge";
             recipeDirs = {
-              packages = "recipes/packages";
-              apps = "recipes/apps";
+              packages = "recipes_nimi/packages";
+              apps = "recipes_nimi/apps";
             };
           };
         };
