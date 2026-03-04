@@ -25,6 +25,10 @@
     #   url = "github:cachix/git-hooks.nix";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
+
+    nimi.url = "github:weyl-ai/nimi";
+    nimi-def.url = "github:weyl-ai/nimi";
+    nimi-def.flake = false;
   };
 
   outputs =
