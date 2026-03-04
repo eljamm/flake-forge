@@ -12,6 +12,39 @@
       Container images output using Nimi.
     '';
 
+    # Legacy: Old format with images list (backward compatibility)
+    images = lib.mkOption {
+      type = lib.types.listOf (
+        lib.types.submodule {
+          options = {
+            name = lib.mkOption {
+              type = lib.types.str;
+              default = "app-container";
+            };
+            requirements = lib.mkOption {
+              type = lib.types.listOf lib.types.package;
+              default = [ ];
+            };
+            config = {
+              CMD = lib.mkOption {
+                type = lib.types.listOf lib.types.str;
+                default = [ ];
+              };
+            };
+          };
+        }
+      );
+      default = [ ];
+      description = "List of container images to build (legacy format).";
+    };
+
+    # Legacy: Old compose file option (backward compatibility)
+    composeFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Relative path to a container compose file (legacy format).";
+    };
+
     settings = lib.mkOption {
       type = lib.types.submodule {
         options = {
@@ -87,11 +120,48 @@
       default =
         let
           nimi = inputs.nimi;
+          # Check if using legacy images format or new settings format
+          useLegacyFormat = app.containers.images != [ ];
         in
-        pkgs.runCommand "${app.name}-${app.version}-containers" { } ''
-          echo "Nimi container output placeholder"
-          mkdir -p $out
-        '';
+        if useLegacyFormat then
+          # Legacy format: use dockerTools
+          let
+            buildImage =
+              image:
+              pkgs.dockerTools.buildImage {
+                name = image.name;
+                tag = "latest";
+                copyToRoot = pkgs.buildEnv {
+                  name = "image-root";
+                  paths = image.requirements;
+                  pathsToLink = [ "/bin" ];
+                };
+                config = {
+                  Cmd = image.config.CMD;
+                };
+              };
+          in
+          pkgs.linkFarm "${app.name}-${app.version}" (
+            (map (image: {
+              name = "${image.name}.tar.gz";
+              path = buildImage image;
+            }) app.containers.images)
+            ++ lib.optionals (app.containers.composeFile != null) [
+              {
+                name = "compose.yaml";
+                path = pkgs.writeTextFile {
+                  name = "compose.yaml";
+                  text = builtins.readFile app.containers.composeFile;
+                };
+              }
+            ]
+          )
+        else
+          # New Nimi-based format (placeholder for now)
+          pkgs.runCommand "${app.name}-${app.version}-containers" { } ''
+            echo "Nimi container output"
+            mkdir -p $out
+          '';
       description = ""; # TODO:
     };
   };

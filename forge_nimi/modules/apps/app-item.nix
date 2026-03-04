@@ -117,5 +117,16 @@
       default = { };
       description = ""; # TODO:
     };
+
+    # Legacy VM option (backward compatibility - maps to nixos)
+    vm = lib.mkOption {
+      type = lib.types.submodule {
+        imports = [ ./nixos ];
+        _module.args.app = config;
+        _module.args.inputs = inputs;
+      };
+      default = { };
+      description = ""; # TODO:
+    };
   };
 }

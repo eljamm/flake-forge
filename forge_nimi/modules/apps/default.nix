@@ -69,13 +69,17 @@ in
                     name = "${app.name}-${app.version}";
                     paths = reqs;
                   };
+                  # Handle both nixos and vm for backward compatibility
+                  nixosConfig = app.nixos or app.vm or { };
+                  # Handle both new containers settings and old images format
+                  containersConfig = app.containers or { };
                 in
                 appDrv.overrideAttrs (
                   _: oldAttrs: {
                     passthru =
                       oldAttrs.passthru or { }
-                      // lib.optionalAttrs (app.containers.enable or false) { containers = app.containers.build; }
-                      // lib.optionalAttrs (app.nixos.enable or false) { nixos = app.nixos.build; };
+                      // lib.optionalAttrs (containersConfig.enable or false) { containers = containersConfig.build; }
+                      // lib.optionalAttrs (nixosConfig.enable or false) { nixos = nixosConfig.build; };
                   }
                 );
 
@@ -108,6 +112,22 @@ in
               "apps.*.containers.enable"
               "apps.*.containers.settings"
               "apps.*.containers.extraConfig"
+              # Legacy containers format (backward compatibility)
+              "apps.*.containers.images"
+              "apps.*.containers.composeFile"
+            ];
+            # Legacy vm option (backward compatibility - maps to nixos)
+            vm = [
+              "apps.*.name"
+              "apps.*.version"
+              "apps.*.vm.enable"
+              "apps.*.vm.name"
+              "apps.*.vm.requirements"
+              "apps.*.vm.config.system"
+              "apps.*.vm.config.ports"
+              "apps.*.vm.config.cores"
+              "apps.*.vm.config.memorySize"
+              "apps.*.vm.config.diskSize"
             ];
             nixos = [
               "apps.*.name"
