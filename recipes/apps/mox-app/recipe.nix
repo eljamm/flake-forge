@@ -31,17 +31,13 @@
     ];
   };
 
-  # services = {
-  #   mox = {
-  #     process.argv = [
-  #       (lib.getExe pkgs.mypkgs.mox)
-  #       "-config"
-  #       "/var/lib/mox/config/mox.conf"
-  #       "serve"
-  #     ];
-  #     requirements = [ pkgs.mypkgs.mox ];
-  #   };
-  # };
+  services.mox = {
+    imports = [ pkgs.mypkgs.mox.services.default ];
+    mox = {
+      hostname = "mail";
+      user = "admin@example.com";
+    };
+  };
 
   # containers = {
   #   enable = true;
