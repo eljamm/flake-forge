@@ -60,8 +60,10 @@
       flake.flakeModules.default = import ./forge/flake-module.nix { inherit inputs; };
 
       perSystem =
-        { lib, ... }:
+        { lib, system, ... }:
         {
+          config._module.args.nimi = inputs.nimi.packages.${system}.nimi;
+
           options.dev = lib.mkOption {
             type = lib.types.anything;
             default = { };
