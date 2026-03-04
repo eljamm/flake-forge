@@ -3,6 +3,8 @@
   inputs,
   config,
   pkgs,
+
+  nimi,
   ...
 }:
 {
@@ -45,6 +47,7 @@
         imports = [ ./modular-services ];
         _module.args.app = config;
         _module.args.pkgs = pkgs;
+        _module.args.nimi = nimi;
       };
       default = { };
       description = "Portable service definitions using NixOS modular services.";

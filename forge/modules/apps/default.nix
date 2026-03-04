@@ -20,6 +20,7 @@ in
       {
         config,
         pkgs,
+        nimi,
         ...
       }:
       {
@@ -40,6 +41,7 @@ in
                 lib.types.submodule {
                   imports = [ ./app-item.nix ];
                   _module.args.pkgs = pkgs;
+                  _module.args.nimi = nimi;
                   _module.args.inputs = inputs;
                 }
               );
@@ -63,7 +65,10 @@ in
                     passthru =
                       oldAttrs.passthru or { }
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                      // lib.optionalAttrs app.vm.enable { vm = app.containers.build; };
+                      // lib.optionalAttrs app.vm.enable { vm = app.containers.build; }
+                      // {
+                        nimi = app.services.build;
+                      };
                   }
                 );
 

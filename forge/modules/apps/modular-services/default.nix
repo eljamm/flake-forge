@@ -1,5 +1,8 @@
 {
   lib,
+
+  nimi,
+  pkgs,
   ...
 }:
 {
@@ -44,6 +47,22 @@
       type = lib.types.listOf lib.types.package;
       default = [ ];
       description = "Nix packages required by this service.";
+    };
+
+    build = lib.mkOption {
+      internal = true;
+      readOnly = true;
+      type = lib.types.package;
+      default = nimi.mkNimiBin {
+        services.mox = {
+          imports = [ pkgs.mox.services.default ];
+          mox = {
+            hostname = "mail";
+            user = "admin@example.com";
+          };
+        };
+      };
+      description = ""; # TODO:
     };
   };
 }
