@@ -43,13 +43,10 @@
       install -Dm755 mox $out/bin/mox
       runHook postInstall
     '';
+  };
 
-    passthru = {
-      services.default = {
-        imports = [ ./service.nix ];
-        mox.package = pkgs.mox;
-      };
-    };
+  passthru = {
+    serviceModule = ./service.nix;
   };
 
   test.script = ''

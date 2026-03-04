@@ -30,6 +30,14 @@
       type = lib.types.attrsOf (
         lib.types.submodule {
           options = {
+            imports = lib.mkOption {
+              type = lib.types.listOf lib.types.path;
+              default = [ ];
+              description = "List of modular service modules to import.";
+              example = lib.literalExpression ''
+                [ pkgs.mypkgs.mox.serviceModule ]
+              '';
+            };
             process = {
               argv = lib.mkOption {
                 type = lib.types.listOf lib.types.str;

@@ -89,8 +89,39 @@ in
                   value = shellBundle app;
                 }) config.forge.apps
               );
+
+              # Generate additional outputs for VM and containers
+              additionalOutputs =
+                let
+                  mkVmOutput =
+                    app:
+                    if (app.nixos or app.vm or { }).enable or false then
+                      let
+                        vmConfig = app.nixos or app.vm or { };
+                      in
+                      [
+                        {
+                          name = "${app.name}.vm";
+                          value = vmConfig.build;
+                        }
+                      ]
+                    else
+                      [ ];
+                  mkContainersOutput =
+                    app:
+                    if (app.containers or { }).enable or false then
+                      [
+                        {
+                          name = "${app.name}.containers";
+                          value = (app.containers or { }).build;
+                        }
+                      ]
+                    else
+                      [ ];
+                in
+                lib.flatten (map (app: mkVmOutput app ++ mkContainersOutput app) config.forge.apps);
             in
-            allApps;
+            allApps // lib.listToAttrs additionalOutputs;
 
           forge.appsFilter = lib.mkDefault {
             # Legacy programs option (backward compatibility)

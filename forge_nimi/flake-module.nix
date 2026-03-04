@@ -41,7 +41,10 @@
               dirPath = self.outPath + "/${dir}";
 
               # Use bundled import-tree from nix-forge inputs
-              recipeFiles = (inputs.import-tree.withLib lib).leafs dirPath;
+              allFiles = (inputs.import-tree.withLib lib).leafs dirPath;
+
+              # Filter out service.nix files - they are modular service modules, not recipes
+              filteredRecipes = lib.filter (f: !lib.hasSuffix "service.nix" f) allFiles;
 
               # Extend pkgs with mypkgs containing all Nix Forge packages
               # This allows recipes to reference other packages via mypkgs
@@ -52,7 +55,7 @@
               # Call each recipe file with extended arguments
               callRecipes = map (file: import file (args // { pkgs = pkgsExtended; }));
             in
-            callRecipes recipeFiles;
+            callRecipes filteredRecipes;
 
         # Load package and app recipes from configured directories
         packageRecipes = loadRecipes config.forge.recipeDirs.packages;

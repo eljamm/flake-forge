@@ -51,32 +51,35 @@ in
                 hash = pkg.source.hash;
               };
 
-          pkgPassthru = pkg: finalPkg: {
-            test = pkgs.testers.runCommand {
-              name = "${pkg.name}-test";
-              buildInputs = [ finalPkg ] ++ pkg.test.requirements;
-              script = pkg.test.script + "\ntouch $out";
-            };
-            image = pkgs.dockerTools.buildImage {
-              name = "${pkg.name}";
-              tag = pkg.version;
-              copyToRoot = [
-                finalPkg
-              ];
-              config = {
-                Entrypoint = [ "${pkgs.bashInteractive}/bin/bash" ];
+          pkgPassthru =
+            pkg: finalPkg:
+            {
+              test = pkgs.testers.runCommand {
+                name = "${pkg.name}-test";
+                buildInputs = [ finalPkg ] ++ pkg.test.requirements;
+                script = pkg.test.script + "\ntouch $out";
               };
-            };
-            devenv = pkgs.mkShell {
-              env.DEVENV_PACKAGE_NAME = "${pkg.name}";
-              env.DEVENV_PACKAGE_SOURCE = "${finalPkg.src}";
-              inputsFrom = [
-                finalPkg
-              ];
-              packages = pkg.development.requirements;
-              shellHook = pkg.development.shellHook;
-            };
-          };
+              image = pkgs.dockerTools.buildImage {
+                name = "${pkg.name}";
+                tag = pkg.version;
+                copyToRoot = [
+                  finalPkg
+                ];
+                config = {
+                  Entrypoint = [ "${pkgs.bashInteractive}/bin/bash" ];
+                };
+              };
+              devenv = pkgs.mkShell {
+                env.DEVENV_PACKAGE_NAME = "${pkg.name}";
+                env.DEVENV_PACKAGE_SOURCE = "${finalPkg.src}";
+                inputsFrom = [
+                  finalPkg
+                ];
+                packages = pkg.development.requirements;
+                shellHook = pkg.development.shellHook;
+              };
+            }
+            // pkg.passthru;
 
           pkgMeta = pkg: {
             description = pkg.description;

@@ -182,5 +182,18 @@
         '';
       };
     };
+
+    passthru = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
+      default = { };
+      description = ''
+        Additional attributes to pass through to the resulting package.
+      '';
+      example = lib.literalExpression ''
+        {
+          serviceModule = ./service.nix;
+        }
+      '';
+    };
   };
 }

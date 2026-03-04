@@ -44,4 +44,20 @@
       };
     };
   };
+
+  nixos = {
+    enable = true;
+    name = "mox-vm";
+    requirements = [ pkgs.mypkgs.mox ];
+    extraConfig = {
+      services.mox = {
+        imports = [ pkgs.mypkgs.mox.serviceModule ];
+        mox = {
+          package = pkgs.mypkgs.mox;
+          hostname = "mail.example.com";
+          user = "admin@example.com";
+        };
+      };
+    };
+  };
 }
