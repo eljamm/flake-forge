@@ -51,12 +51,12 @@
             callRecipes recipeFiles;
 
         # Load package and app recipes from configured directories
-        packageRecipes = loadRecipes config.forge.recipeDirs.packages;
-        appRecipes = loadRecipes config.forge.recipeDirs.apps;
+        packageRecipes = loadRecipes config.forge_2.recipeDirs.packages;
+        appRecipes = loadRecipes config.forge_2.recipeDirs.apps;
       in
       {
-        forge.packages = packageRecipes;
-        forge.apps = appRecipes;
+        forge_2.packages = packageRecipes;
+        forge_2.apps = appRecipes;
       };
   };
 }

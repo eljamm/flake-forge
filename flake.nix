@@ -79,6 +79,13 @@
               apps = "recipes/apps";
             };
           };
+
+          config.forge_2 = {
+            recipeDirs = {
+              packages = "recipes_2/packages";
+              apps = "recipes_2/apps";
+            };
+          };
         };
     };
 }

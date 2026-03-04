@@ -12,7 +12,7 @@ let
 in
 {
   imports = [
-    ../assertions-warnings.nix
+    ../../forge/modules/assertions-warnings.nix
   ];
 
   options = {
@@ -24,7 +24,7 @@ in
       }:
       {
         options = {
-          forge = {
+          forge_2 = {
             appsFilter = lib.mkOption {
               internal = true;
               type = lib.types.attrsOf (lib.types.listOf lib.types.str);
@@ -37,7 +37,7 @@ in
               description = "List of applications.";
               type = lib.types.listOf (
                 lib.types.submodule {
-                  imports = [ ./app-item.nix ];
+                  imports = [ ./app.nix ];
                   _module.args.pkgs = pkgs;
                   _module.args.inputs = inputs;
                 }
@@ -70,12 +70,12 @@ in
                 map (app: {
                   name = "${app.name}";
                   value = shellBundle app;
-                }) config.forge.apps
+                }) config.forge_2.apps
               );
             in
             allApps;
 
-          forge.appsFilter = lib.mkDefault {
+          forge_2.appsFilter = lib.mkDefault {
             services = [
               "apps.*.name"
               "apps.*.version"
