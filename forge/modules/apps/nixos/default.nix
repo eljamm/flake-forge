@@ -121,7 +121,7 @@
         internal = true;
         readOnly = true;
         type = lib.types.package;
-        default = config.vm.config.system.build.vm;
+        default = config.vm.eval.config.system.build.vm;
         description = ""; # TODO:
       };
     };
