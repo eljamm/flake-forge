@@ -20,6 +20,10 @@
       url = "github:imincik/nix-utils";
       flake = false;
     };
+    nimi = {
+      url = "github:weyl-ai/nimi";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # git-hooks = {
     #   url = "github:cachix/git-hooks.nix";
@@ -44,6 +48,7 @@
 
       imports = [
         ./forge/flake-module.nix
+        ./forge_2/flake-module.nix
         ./flake/develop.nix
         ./flake/checks.nix
         ./flake/templates.nix
