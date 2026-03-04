@@ -67,7 +67,7 @@ in
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
                       // lib.optionalAttrs app.vm.enable { vm = app.containers.build; }
                       // lib.optionalAttrs app.nixos.enable {
-                        nimi = nimi.mkNimiBin {
+                        nimi = nimi.mkContainerImage {
                           services = app.services;
                         };
                       };
