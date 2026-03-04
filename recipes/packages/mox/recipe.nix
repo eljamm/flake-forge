@@ -46,7 +46,7 @@
 
     passthru = {
       services.default = {
-        imports = [ ./service.nix ];
+        imports = [ ./modular-service.nix ];
         mox.package = pkgs.mox;
       };
     };
