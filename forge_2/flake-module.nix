@@ -1,13 +1,17 @@
 {
   lib,
   self,
-  inputs,
+  inputs, # nix-forge's inputs (import-tree, nix-utils)
   ...
 }:
 
 {
+  # Import the core forge modules
   imports = [
+    ./modules/forge.nix
     ./modules/apps
+    ./modules/packages.nix
+    ./packages.nix # Generates _forge-config, _forge-options, _forge-ui
   ];
 
   config = {

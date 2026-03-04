@@ -86,9 +86,6 @@
       let
         cfg = app.containers;
         containerSettings = cfg.settings.container or { };
-        nimi = inputs.nimi;
-
-        image = nimi.outPath + "/bin/nimi";
       in
       pkgs.runCommand "${app.name}-container" { } ''
         echo "Building container with Nimi settings"

@@ -47,6 +47,7 @@
 
         _forge-options = optionsDoc [
           ./modules/apps
+          ./modules/packages.nix
         ];
 
         _forge-ui = pkgs.callPackage ../ui/package.nix {

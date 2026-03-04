@@ -12,7 +12,7 @@ let
 in
 {
   imports = [
-    ../../forge/modules/assertions-warnings.nix
+    ../assertions-warnings.nix
   ];
 
   options = {
@@ -37,7 +37,7 @@ in
               description = "List of applications.";
               type = lib.types.listOf (
                 lib.types.submodule {
-                  imports = [ ./app.nix ];
+                  imports = [ ./app-item.nix ];
                   _module.args.pkgs = pkgs;
                   _module.args.inputs = inputs;
                 }

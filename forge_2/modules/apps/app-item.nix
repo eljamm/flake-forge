@@ -7,6 +7,7 @@
 }:
 {
   options = {
+    # General configuration
     name = lib.mkOption {
       type = lib.types.str;
       default = "my-application";
@@ -25,6 +26,7 @@
       description = "Application usage description in markdown format.";
     };
 
+    # Portable services configuration (replaces programs)
     services = lib.mkOption {
       type = lib.types.lazyAttrsOf (
         lib.types.submodule {
@@ -73,9 +75,10 @@
       '';
     };
 
+    # Container configuration using Nimi
     containers = lib.mkOption {
       type = lib.types.submodule {
-        imports = [ ./containers.nix ];
+        imports = [ ./containers ];
         _module.args.app = config;
         _module.args.pkgs = pkgs;
         _module.args.inputs = inputs;
@@ -84,9 +87,10 @@
       description = "Container configuration using Nimi.";
     };
 
+    # NixOS configuration (renamed from vm)
     nixos = lib.mkOption {
       type = lib.types.submodule {
-        imports = [ ./nixos.nix ];
+        imports = [ ./vm ];
         _module.args.app = config;
         _module.args.inputs = inputs;
       };
