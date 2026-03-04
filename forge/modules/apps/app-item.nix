@@ -38,6 +38,27 @@
       };
     };
 
+    # Portable services configuration (replaces programs)
+    services = lib.mkOption {
+      type = lib.types.lazyAttrsOf {
+        # TODO: can't we just re-use this from Nixpkgs?
+        imports = [ ./modular-services ];
+        _module.args.app = config;
+        _module.args.pkgs = pkgs;
+      };
+      default = { };
+      description = "Portable service definitions using NixOS modular services.";
+      example = lib.literalExpression ''
+        {
+          my-service = {
+            process.argv = [ (lib.getExe pkgs.mypkgs.my-package) "--flag" ];
+            configData."config.conf" = { text = "port=8080"; };
+            requirements = [ pkgs.mypkgs.my-package ];
+          };
+        }
+      '';
+    };
+
     # Container configuration
     containers = lib.mkOption {
       type = lib.types.submodule {
