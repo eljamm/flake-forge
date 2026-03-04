@@ -42,13 +42,15 @@
 
     # Portable services configuration (replaces programs)
     services = lib.mkOption {
-      type = lib.types.lazyAttrsOf {
-        # TODO: can't we just re-use this from Nixpkgs?
-        imports = [ ./modular-services ];
-        _module.args.app = config;
-        _module.args.pkgs = pkgs;
-        _module.args.nimi = nimi;
-      };
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          # TODO: can't we just re-use this from Nixpkgs?
+          imports = [ ./modular-services ];
+          _module.args.app = config;
+          _module.args.pkgs = pkgs;
+          _module.args.nimi = nimi;
+        }
+      );
       default = { };
       description = "Portable service definitions using NixOS modular services.";
       example = lib.literalExpression ''
