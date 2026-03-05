@@ -69,7 +69,7 @@
       cores = 4;
       diskSize = 4096;
       memorySize = 2048;
-      ports = [ "8080:80" ];
+      ports = [ "9191:80" ];
     };
   };
 }
