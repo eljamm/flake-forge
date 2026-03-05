@@ -143,6 +143,10 @@
                   system.stateVersion = "25.11";
                   passthru = { }; # FIX: why is this required?
                 }
+                {
+                  # modular services
+                  system = { inherit (app) services; };
+                }
                 config.system
               ];
             };
