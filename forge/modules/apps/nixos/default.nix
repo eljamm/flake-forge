@@ -91,6 +91,56 @@
         internal = true;
         readOnly = true;
         type = with lib.types; lazyAttrsOf (either attrs anything);
+        default =
+          let
+            forwardPortsAttrs =
+              ports:
+              map (
+                port:
+                let
+                  portSplit = lib.splitString ":" port;
+                in
+                {
+                  from = "host";
+                  host.port = lib.toInt (lib.elemAt portSplit 0);
+                  guest.port = lib.toInt (lib.elemAt portSplit 1);
+                }
+              ) ports;
+
+            system = inputs.nixpkgs.lib.nixosSystem {
+              system = "x86_64-linux";
+              modules = [
+                (
+                  { modulesPath, ... }:
+                  {
+                    imports = [ (modulesPath + "/virtualisation/qemu-vm.nix") ];
+                    virtualisation.graphics = false;
+                    virtualisation.cores = app.vm.config.cores;
+                    virtualisation.memorySize = app.vm.config.memorySize;
+                    virtualisation.diskSize = app.vm.config.diskSize;
+                    virtualisation.forwardPorts = forwardPortsAttrs app.vm.config.ports;
+                  }
+                )
+                {
+                  users.users.root.password = "root";
+                  services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
+                  services.openssh.settings.PasswordAuthentication = lib.mkForce true;
+                  services.getty.autologinUser = "root";
+                  environment.systemPackages = app.vm.requirements;
+                  networking.hostName = app.vm.name;
+                  networking.useDHCP = lib.mkForce true;
+                  networking.firewall.enable = lib.mkForce false;
+                  system.stateVersion = "25.11";
+                }
+                {
+                  # modular services
+                  system = { inherit (app) services; };
+                }
+                config.system
+              ];
+            };
+          in
+          system;
         description = "NixOS system evaluation.";
       };
 
@@ -102,58 +152,5 @@
         description = "NixOS Virtual Machine.";
       };
     };
-  };
-
-  config = lib.mkIf config.enable {
-    vm.eval =
-      let
-        forwardPortsAttrs =
-          ports:
-          map (
-            port:
-            let
-              portSplit = lib.splitString ":" port;
-            in
-            {
-              from = "host";
-              host.port = lib.toInt (lib.elemAt portSplit 0);
-              guest.port = lib.toInt (lib.elemAt portSplit 1);
-            }
-          ) ports;
-
-        system = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            (
-              { modulesPath, ... }:
-              {
-                imports = [ (modulesPath + "/virtualisation/qemu-vm.nix") ];
-                virtualisation.graphics = false;
-                virtualisation.cores = app.vm.config.cores;
-                virtualisation.memorySize = app.vm.config.memorySize;
-                virtualisation.diskSize = app.vm.config.diskSize;
-                virtualisation.forwardPorts = forwardPortsAttrs app.vm.config.ports;
-              }
-            )
-            {
-              users.users.root.password = "root";
-              services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
-              services.openssh.settings.PasswordAuthentication = lib.mkForce true;
-              services.getty.autologinUser = "root";
-              environment.systemPackages = app.vm.requirements;
-              networking.hostName = app.vm.name;
-              networking.useDHCP = lib.mkForce true;
-              networking.firewall.enable = lib.mkForce false;
-              system.stateVersion = "25.11";
-            }
-            {
-              # modular services
-              system = { inherit (app) services; };
-            }
-            config.system
-          ];
-        };
-      in
-      system;
   };
 }
