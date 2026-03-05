@@ -5,7 +5,7 @@
   ...
 }:
 
-{
+rec {
   name = "mox-app";
   version = "0.0.15";
   description = "Modern full-featured open source secure mail server";
@@ -56,8 +56,14 @@
           })
         ];
       };
-      startup.runOnStartup = pkgs.writeScript "mox-setup" ''
-        /bin/mox quickstart -hostname mox 'admin@example.com'
+      startup.runOnStartup = pkgs.writeShellScript "mox-setup" ''
+        USER_UID=0
+
+        /bin/mox \
+          quickstart \
+          -hostname ${services.mox.mox.hostname} \
+          ${services.mox.mox.user} \
+          $USER_UID
       '';
     };
     extraConfig = { };
