@@ -77,18 +77,5 @@
       default = { };
       description = ""; # TODO:
     };
-
-    # TODO: remove
-    # Virtual machine
-    vm = lib.mkOption {
-      internal = true;
-      type = lib.types.submodule {
-        imports = [ ./vm ];
-        _module.args.app = config;
-        _module.args.inputs = inputs;
-      };
-      default = { };
-      description = ""; # TODO:
-    };
   };
 }

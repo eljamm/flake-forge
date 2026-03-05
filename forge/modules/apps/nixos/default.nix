@@ -101,13 +101,6 @@
       };
     };
 
-    # Legacy: requirements option for backward compatibility
-    requirements = lib.mkOption {
-      type = lib.types.listOf lib.types.package;
-      default = [ ];
-      description = "Nix packages to include in the VM.";
-    };
-
     debug = {
       eval = lib.mkOption {
         internal = true;
@@ -148,8 +141,7 @@
           services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
           services.openssh.settings.PasswordAuthentication = lib.mkForce true;
           services.getty.autologinUser = "root";
-          environment.systemPackages = app.vm.requirements;
-          networking.hostName = app.vm.name;
+          networking.hostName = config.name;
           networking.useDHCP = lib.mkForce true;
           networking.firewall.enable = lib.mkForce false;
           system.stateVersion = "25.11";
