@@ -39,16 +39,16 @@
     };
   };
 
-  # containers = {
-  #   enable = true;
-  #   settings = {
-  #     container = {
-  #       name = "mox";
-  #       copyToRoot = [ pkgs.mypkgs.mox ];
-  #     };
-  #   };
-  #   extraConfig = { };
-  # };
+  oci = {
+    enable = true;
+    settings = {
+      container = {
+        name = "mox";
+        copyToRoot = [ pkgs.mypkgs.mox ];
+      };
+    };
+    extraConfig = { };
+  };
 
   nixos = {
     enable = true;

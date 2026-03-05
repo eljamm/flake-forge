@@ -77,5 +77,18 @@
       default = { };
       description = ""; # TODO:
     };
+
+    # Container configuration (WIP)
+    # TODO: replace `containers`
+    oci = lib.mkOption {
+      type = lib.types.submodule {
+        imports = [ ./oci ];
+        _module.args.app = config;
+        _module.args.pkgs = pkgs;
+        _module.args.nimi = nimi;
+      };
+      default = { };
+      description = ""; # TODO:
+    };
   };
 }
