@@ -54,6 +54,16 @@
     enable = true;
     system = {
       services.postgresql.enable = true;
+
+      users.users.mox = {
+        isSystemUser = true;
+        name = "mox";
+        group = "mox";
+        home = "/var/lib/mox";
+        createHome = true;
+        description = "Mox Mail Server User";
+      };
+      users.groups.mox = { };
     };
     settings = { }; # Nimi settings
     extraConfig = { }; # arbitrary NixOS config
