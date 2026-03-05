@@ -52,7 +52,8 @@
 
   nixos = {
     enable = true;
-    system = {
+    settings = { }; # Nimi settings
+    extraConfig = {
       services.postgresql.enable = true;
       users.users.mox = {
         isSystemUser = true;
@@ -64,7 +65,6 @@
       };
       users.groups.mox = { };
     };
-    settings = { }; # Nimi settings
     vm = {
       cores = 4;
       diskSize = 4096;

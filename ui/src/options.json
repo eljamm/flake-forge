@@ -231,6 +231,28 @@
     "readOnly": false,
     "type": "boolean"
   },
+  "apps.*.nixos.extraConfig": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "{ }"
+    },
+    "description": "NixOS system configuration (legacy format).\n\nSee: https://search.nixos.org/options\n",
+    "example": {
+      "_type": "literalExpression",
+      "text": "{\n  services.postgresql.enable = true;\n}\n"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "extraConfig"
+    ],
+    "readOnly": false,
+    "type": "lazy attribute set of ((attribute set) or anything)"
+  },
   "apps.*.nixos.name": {
     "declarations": [],
     "default": {
@@ -288,28 +310,6 @@
     ],
     "readOnly": false,
     "type": "attribute set of anything"
-  },
-  "apps.*.nixos.system": {
-    "declarations": [],
-    "default": {
-      "_type": "literalExpression",
-      "text": "{ }"
-    },
-    "description": "NixOS system configuration (legacy format).\n\nSee: https://search.nixos.org/options\n",
-    "example": {
-      "_type": "literalExpression",
-      "text": "{\n  services.postgresql.enable = true;\n}\n"
-    },
-    "loc": [
-      "perSystem",
-      "forge",
-      "apps",
-      "*",
-      "nixos",
-      "system"
-    ],
-    "readOnly": false,
-    "type": "lazy attribute set of ((attribute set) or anything)"
   },
   "apps.*.nixos.vm.cores": {
     "declarations": [],

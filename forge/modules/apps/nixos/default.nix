@@ -4,7 +4,6 @@
 
   app,
   config,
-  pkgs,
   ...
 }:
 {
@@ -19,14 +18,7 @@
       description = "Hostname for the VM.";
     };
 
-    # Legacy: requirements option for backward compatibility
-    requirements = lib.mkOption {
-      type = lib.types.listOf lib.types.package;
-      default = [ ];
-      description = "Nix packages to include in the VM.";
-    };
-
-    system = lib.mkOption {
+    extraConfig = lib.mkOption {
       type = with lib.types; lazyAttrsOf (either attrs anything);
       default = { };
       description = ''
@@ -62,17 +54,17 @@
         description = "Number of CPU cores available to VM.";
         example = 8;
       };
-      memorySize = lib.mkOption {
-        type = lib.types.int;
-        default = 1024 * 2;
-        description = "VM memory size in MB.";
-        example = 1024 * 4;
-      };
       diskSize = lib.mkOption {
         type = lib.types.int;
         default = 1024 * 4;
         description = "VM disk size in MB.";
         example = 1024 * 10;
+      };
+      memorySize = lib.mkOption {
+        type = lib.types.int;
+        default = 1024 * 2;
+        description = "VM memory size in MB.";
+        example = 1024 * 4;
       };
       ports = lib.mkOption {
         type = lib.types.listOf (lib.types.strMatching "^[0-9]*:[0-9]*$");
@@ -94,6 +86,13 @@
         default = config.debug.eval.config.system.build.vm;
         description = "NixOS Virtual Machine.";
       };
+    };
+
+    # Legacy: requirements option for backward compatibility
+    requirements = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = [ ];
+      description = "Nix packages to include in the VM.";
     };
 
     debug = {
@@ -162,7 +161,7 @@
               # modular services
               system = { inherit (app) services; };
             }
-            config.system
+            config.extraConfig
           ];
         };
       in
