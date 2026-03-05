@@ -129,41 +129,37 @@
   };
 
   config = {
-    debug.eval =
-      let
-        system = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            (
-              { modulesPath, ... }:
-              {
-                imports = [ (modulesPath + "/virtualisation/qemu-vm.nix") ];
-                virtualisation.graphics = false;
-                virtualisation.cores = config.vm.cores;
-                virtualisation.memorySize = config.vm.memorySize;
-                virtualisation.diskSize = config.vm.diskSize;
-                virtualisation.forwardPorts = config.vm.ports;
-              }
-            )
-            {
-              users.users.root.password = "root";
-              services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
-              services.openssh.settings.PasswordAuthentication = lib.mkForce true;
-              services.getty.autologinUser = "root";
-              environment.systemPackages = app.vm.requirements;
-              networking.hostName = app.vm.name;
-              networking.useDHCP = lib.mkForce true;
-              networking.firewall.enable = lib.mkForce false;
-              system.stateVersion = "25.11";
-            }
-            {
-              # modular services
-              system = { inherit (app) services; };
-            }
-            config.extraConfig
-          ];
-        };
-      in
-      system;
+    debug.eval = inputs.nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        (
+          { modulesPath, ... }:
+          {
+            imports = [ (modulesPath + "/virtualisation/qemu-vm.nix") ];
+            virtualisation.graphics = false;
+            virtualisation.cores = config.vm.cores;
+            virtualisation.memorySize = config.vm.memorySize;
+            virtualisation.diskSize = config.vm.diskSize;
+            virtualisation.forwardPorts = config.vm.ports;
+          }
+        )
+        {
+          users.users.root.password = "root";
+          services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
+          services.openssh.settings.PasswordAuthentication = lib.mkForce true;
+          services.getty.autologinUser = "root";
+          environment.systemPackages = app.vm.requirements;
+          networking.hostName = app.vm.name;
+          networking.useDHCP = lib.mkForce true;
+          networking.firewall.enable = lib.mkForce false;
+          system.stateVersion = "25.11";
+        }
+        {
+          # modular services
+          system = { inherit (app) services; };
+        }
+        config.extraConfig
+      ];
+    };
   };
 }
