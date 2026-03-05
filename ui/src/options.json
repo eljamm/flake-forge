@@ -14,6 +14,23 @@
     "readOnly": false,
     "type": "list of (submodule)"
   },
+  "apps.*.containers": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "{ }"
+    },
+    "description": "",
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "containers"
+    ],
+    "readOnly": false,
+    "type": "submodule"
+  },
   "apps.*.containers.composeFile": {
     "declarations": [],
     "default": {
@@ -175,6 +192,217 @@
     "readOnly": false,
     "type": "string"
   },
+  "apps.*.nixos": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "{ }"
+    },
+    "description": "",
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos"
+    ],
+    "readOnly": false,
+    "type": "submodule"
+  },
+  "apps.*.nixos.enable": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "false"
+    },
+    "description": "Whether to enable NixOS/VM output.\n.",
+    "example": {
+      "_type": "literalExpression",
+      "text": "true"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "enable"
+    ],
+    "readOnly": false,
+    "type": "boolean"
+  },
+  "apps.*.nixos.name": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "\"nixos-vm\""
+    },
+    "description": "Hostname for the VM.",
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "name"
+    ],
+    "readOnly": false,
+    "type": "string"
+  },
+  "apps.*.nixos.requirements": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "[ ]"
+    },
+    "description": "Nix packages to include in the VM.",
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "requirements"
+    ],
+    "readOnly": false,
+    "type": "list of package"
+  },
+  "apps.*.nixos.settings": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "{ }"
+    },
+    "description": "Nimi settings for the NixOS configuration.",
+    "example": {
+      "_type": "literalExpression",
+      "text": "{\n  restart.mode = \"always\";\n  restart.time = 1000;\n  logging.enable = true;\n}\n"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "settings"
+    ],
+    "readOnly": false,
+    "type": "attribute set of anything"
+  },
+  "apps.*.nixos.system": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "{ }"
+    },
+    "description": "NixOS system configuration (legacy format).\n\nSee: https://search.nixos.org/options\n",
+    "example": {
+      "_type": "literalExpression",
+      "text": "{\n  services.postgresql.enable = true;\n}\n"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "system"
+    ],
+    "readOnly": false,
+    "type": "lazy attribute set of ((attribute set) or anything)"
+  },
+  "apps.*.nixos.vm.cores": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "4"
+    },
+    "description": "Number of CPU cores available to VM.",
+    "example": {
+      "_type": "literalExpression",
+      "text": "8"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "vm",
+      "cores"
+    ],
+    "readOnly": false,
+    "type": "signed integer"
+  },
+  "apps.*.nixos.vm.diskSize": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "4096"
+    },
+    "description": "VM disk size in MB.",
+    "example": {
+      "_type": "literalExpression",
+      "text": "10240"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "vm",
+      "diskSize"
+    ],
+    "readOnly": false,
+    "type": "signed integer"
+  },
+  "apps.*.nixos.vm.memorySize": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "2048"
+    },
+    "description": "VM memory size in MB.",
+    "example": {
+      "_type": "literalExpression",
+      "text": "4096"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "vm",
+      "memorySize"
+    ],
+    "readOnly": false,
+    "type": "signed integer"
+  },
+  "apps.*.nixos.vm.ports": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "[ ]"
+    },
+    "description": "List of ports to forward from host system to VM.\n\nFormat: HOST_PORT:VM_PORT\n",
+    "example": {
+      "_type": "literalExpression",
+      "text": "[ \"10022:22\" \"5432:5432\" \"8000:80\" ]\n"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "nixos",
+      "vm",
+      "ports"
+    ],
+    "readOnly": false,
+    "type": "list of string matching the pattern ^[0-9]*:[0-9]*$"
+  },
   "apps.*.programs.enable": {
     "declarations": [],
     "default": {
@@ -203,7 +431,7 @@
       "_type": "literalExpression",
       "text": "[ ]"
     },
-    "description": "This option has no description.",
+    "description": "",
     "loc": [
       "perSystem",
       "forge",
@@ -214,6 +442,27 @@
     ],
     "readOnly": false,
     "type": "list of package"
+  },
+  "apps.*.services": {
+    "declarations": [],
+    "default": {
+      "_type": "literalExpression",
+      "text": "{ }"
+    },
+    "description": "Portable service definitions using NixOS modular services.",
+    "example": {
+      "_type": "literalExpression",
+      "text": "{\n  my-service = {\n    process.argv = [ (lib.getExe pkgs.mypkgs.my-package) \"--flag\" ];\n    configData.\"config.conf\" = { text = \"port=8080\"; };\n  };\n}\n"
+    },
+    "loc": [
+      "perSystem",
+      "forge",
+      "apps",
+      "*",
+      "services"
+    ],
+    "readOnly": false,
+    "type": "attribute set"
   },
   "apps.*.usage": {
     "declarations": [],
