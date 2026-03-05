@@ -40,17 +40,9 @@
       };
     };
 
-    # Portable services configuration (replaces programs)
+    # Portable services configuration
+    # https://nixos.org/manual/nixos/unstable/#modular-services
     services = lib.mkOption {
-      # type = lib.types.attrsOf (
-      #   lib.types.submodule {
-      #     # TODO: can't we just re-use this from Nixpkgs?
-      #     imports = [ ./modular-services ];
-      #     _module.args.app = config;
-      #     _module.args.pkgs = pkgs;
-      #     _module.args.nimi = nimi;
-      #   }
-      # );
       type = lib.types.attrs;
       default = { };
       description = "Portable service definitions using NixOS modular services.";
@@ -59,7 +51,6 @@
           my-service = {
             process.argv = [ (lib.getExe pkgs.mypkgs.my-package) "--flag" ];
             configData."config.conf" = { text = "port=8080"; };
-            requirements = [ pkgs.mypkgs.my-package ];
           };
         }
       '';
@@ -87,8 +78,10 @@
       description = ""; # TODO:
     };
 
+    # TODO: remove
     # Virtual machine
     vm = lib.mkOption {
+      internal = true;
       type = lib.types.submodule {
         imports = [ ./vm ];
         _module.args.app = config;
