@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
 
   app,
@@ -54,6 +55,21 @@
         inherit (app) services;
         inherit (config) settings;
       };
+      description = ""; # TODO:
+    };
+
+    build-image = lib.mkOption {
+      internal = true;
+      readOnly = true;
+      type = lib.types.package;
+      default =
+        let
+          inherit (config.settings) container;
+        in
+        pkgs.writeScriptBin "build-oci" ''
+          ${config.build.copyTo}/bin/copy-to \
+            oci-archive:${container.name}.tar:${container.name}:${container.tag}
+        '';
       description = ""; # TODO:
     };
   };
