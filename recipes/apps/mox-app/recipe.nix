@@ -52,6 +52,9 @@
 
   nixos = {
     enable = true;
+    system = {
+      services.postgresql.enable = true;
+    };
     settings = { }; # Nimi settings
     extraConfig = { }; # arbitrary NixOS config
     vm = {
