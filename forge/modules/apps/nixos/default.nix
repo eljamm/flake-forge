@@ -154,6 +154,8 @@
     };
 
     __toString = lib.mkOption {
+      internal = true;
+      readOnly = true;
       type = with lib.types; functionTo str;
       default = self: "nixos-system-config";
     };
