@@ -41,7 +41,22 @@
               dirPath = self.outPath + "/${dir}";
 
               # Use bundled import-tree from nix-forge inputs
-              recipeFiles = (inputs.import-tree.withLib lib).leafs dirPath;
+              allLeafs = (inputs.import-tree.withLib lib).leafs dirPath;
+
+              excludedRegex = [
+                "service.*"
+                "test.*"
+                ".*\\.md"
+              ];
+
+              recipeFiles = lib.filter (
+                filePath:
+                let
+                  fileName = baseNameOf (toString filePath);
+                  isExcluded = lib.any (regex: (lib.match regex fileName) != null) excludedRegex;
+                in
+                !isExcluded
+              ) allLeafs;
 
               # Extend pkgs with mypkgs containing all Nix Forge packages
               # This allows recipes to reference other packages via mypkgs
