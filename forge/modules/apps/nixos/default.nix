@@ -120,7 +120,6 @@
             eval = inputs.nixpkgs.lib.nixosSystem {
               system = "x86_64-linux";
               modules = [
-                app.vm.config.system
                 (
                   { modulesPath, ... }:
                   {
@@ -144,6 +143,7 @@
                   system.stateVersion = "25.11";
                   passthru = { }; # FIX: why is this required?
                 }
+                config.system
               ];
             };
           in
