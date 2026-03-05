@@ -97,61 +97,59 @@
         '';
       };
 
-      eval = lib.mkOption {
-        type = lib.types.attrsOf lib.types.anything;
-        default = { };
-        description = ""; # TODO:
-      };
-
       build = lib.mkOption {
         internal = true;
         readOnly = true;
         type = lib.types.package;
-        default = config.vm.eval.config.system.build.vm;
+        default =
+          let
+            forwardPortsAttrs =
+              ports:
+              map (
+                port:
+                let
+                  portSplit = lib.splitString ":" port;
+                in
+                {
+                  from = "host";
+                  host.port = lib.toInt (lib.elemAt portSplit 0);
+                  guest.port = lib.toInt (lib.elemAt portSplit 1);
+                }
+              ) ports;
+
+            eval = inputs.nixpkgs.lib.nixosSystem {
+              system = "x86_64-linux";
+              modules = [
+                app.vm.config.system
+                (
+                  { modulesPath, ... }:
+                  {
+                    imports = [ (modulesPath + "/virtualisation/qemu-vm.nix") ];
+                    virtualisation.graphics = false;
+                    virtualisation.cores = app.vm.config.cores;
+                    virtualisation.memorySize = app.vm.config.memorySize;
+                    virtualisation.diskSize = app.vm.config.diskSize;
+                    virtualisation.forwardPorts = forwardPortsAttrs app.vm.config.ports;
+                  }
+                )
+                {
+                  users.users.root.password = "root";
+                  services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
+                  services.openssh.settings.PasswordAuthentication = lib.mkForce true;
+                  services.getty.autologinUser = "root";
+                  environment.systemPackages = app.vm.requirements;
+                  networking.hostName = app.vm.name;
+                  networking.useDHCP = lib.mkForce true;
+                  networking.firewall.enable = lib.mkForce false;
+                  system.stateVersion = "25.11";
+                  passthru = { }; # FIX: why is this required?
+                }
+              ];
+            };
+          in
+          eval.config.system.build.vm;
         description = ""; # TODO:
       };
     };
-  };
-
-  config = lib.mkIf config.enable {
-    vm.eval =
-      let
-        forwardPortsAttrs =
-          ports:
-          map (
-            port:
-            let
-              portSplit = lib.splitString ":" port;
-            in
-            {
-              from = "host";
-              host.port = lib.toInt (lib.elemAt portSplit 0);
-              guest.port = lib.toInt (lib.elemAt portSplit 1);
-            }
-          ) ports;
-      in
-      inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          (lib.recursiveUpdate {
-            imports = [ "${inputs.nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix" ];
-            users.users.root.password = "root";
-            services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
-            services.openssh.settings.PasswordAuthentication = lib.mkForce true;
-            services.getty.autologinUser = "root";
-            environment.systemPackages = app.vm.requirements;
-            networking.hostName = app.vm.name;
-            networking.useDHCP = lib.mkForce true;
-            networking.firewall.enable = lib.mkForce false;
-            virtualisation.graphics = false;
-            virtualisation.cores = app.vm.config.cores;
-            virtualisation.memorySize = app.vm.config.memorySize;
-            virtualisation.diskSize = app.vm.config.diskSize;
-            virtualisation.forwardPorts = forwardPortsAttrs app.vm.config.ports;
-            system.stateVersion = "25.11";
-            passthru = { }; # FIX: why is this required?
-          } app.vm.config.system)
-        ];
-      };
   };
 }
