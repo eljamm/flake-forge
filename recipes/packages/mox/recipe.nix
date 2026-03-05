@@ -111,7 +111,8 @@
                     # TODO: name of the service varies depending on the user?
                     before = [ "mox.service" ];
                     serviceConfig = {
-                      WorkingDirectory = "/var/lib/mox";
+                      StateDirectory = "mox";
+                      WorkingDirectory = "%S/mox";
                       Type = "oneshot";
                       RemainAfterExit = true;
                       User = "mox";
@@ -129,7 +130,8 @@
                   after = [ "mox-setup.service" ];
                   requires = [ "mox-setup.service" ];
                   serviceConfig = {
-                    WorkingDirectory = "/var/lib/mox";
+                    StateDirectory = "mox";
+                    WorkingDirectory = "%S/mox";
                     Restart = "always";
                   };
                 };
