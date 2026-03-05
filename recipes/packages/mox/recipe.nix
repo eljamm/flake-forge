@@ -79,13 +79,13 @@
                 };
               };
 
-              configData."config/mox.conf" = {
-              }
-              // lib.optionalAttrs (options ? systemd) {
-                path = "/var/lib/mox/config/mox.conf";
-              };
-
               config = {
+                configData."config/mox.conf" = {
+                }
+                // lib.optionalAttrs (options ? systemd) {
+                  path = "/var/lib/mox/config/mox.conf";
+                };
+
                 process.argv = [
                   (lib.getExe cfg.package)
                   "-config"
