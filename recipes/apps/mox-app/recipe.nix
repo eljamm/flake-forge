@@ -5,7 +5,7 @@
   ...
 }:
 
-rec {
+{
   name = "mox-app";
   version = "0.0.15";
   description = "Modern full-featured open source secure mail server";
@@ -39,35 +39,35 @@ rec {
     };
   };
 
-  oci = {
-    enable = true;
-    settings = {
-      container = {
-        name = "mox";
-        copyToRoot = [
-          (pkgs.buildEnv {
-            name = "runtime-bins";
-            paths = [
-              pkgs.mypkgs.mox
-              pkgs.coreutils
-              pkgs.bash
-            ];
-            pathsToLink = [ "/bin" ];
-          })
-        ];
+  oci =
+    { config, ... }:
+    let
+      cfg = config.debug.eval.services.mox;
+    in
+    {
+      enable = true;
+      settings = {
+        container = {
+          name = "mox";
+          copyToRoot = [
+            (pkgs.buildEnv {
+              name = "runtime-bins";
+              paths = [
+                pkgs.mypkgs.mox
+                pkgs.coreutils
+                pkgs.bash
+              ];
+              pathsToLink = [ "/bin" ];
+            })
+          ];
+        };
+        startup.runOnStartup = pkgs.writeShellScript "mox-setup" ''
+          USER_UID=0
+          ${toString cfg.services.setup.process.argv} $USER_UID
+        '';
       };
-      startup.runOnStartup = pkgs.writeShellScript "mox-setup" ''
-        USER_UID=0
-
-        /bin/mox \
-          quickstart \
-          -hostname ${services.mox.mox.hostname} \
-          ${services.mox.mox.user} \
-          $USER_UID
-      '';
+      extraConfig = { };
     };
-    extraConfig = { };
-  };
 
   nixos = {
     enable = true;
