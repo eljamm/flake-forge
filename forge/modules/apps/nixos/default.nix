@@ -77,6 +77,19 @@
         example = lib.literalExpression ''
           [ "10022:22" "5432:5432" "8000:80" ]
         '';
+        apply =
+          self:
+          map (
+            portRange:
+            let
+              portSplit = lib.splitString ":" portRange;
+            in
+            {
+              from = "host";
+              host.port = lib.toInt (lib.elemAt portSplit 0);
+              guest.port = lib.toInt (lib.elemAt portSplit 1);
+            }
+          ) self;
       };
 
       build = lib.mkOption {
@@ -118,20 +131,6 @@
   config = {
     debug.eval =
       let
-        forwardPortsAttrs =
-          ports:
-          map (
-            port:
-            let
-              portSplit = lib.splitString ":" port;
-            in
-            {
-              from = "host";
-              host.port = lib.toInt (lib.elemAt portSplit 0);
-              guest.port = lib.toInt (lib.elemAt portSplit 1);
-            }
-          ) ports;
-
         system = inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
@@ -143,7 +142,7 @@
                 virtualisation.cores = app.vm.config.cores;
                 virtualisation.memorySize = app.vm.config.memorySize;
                 virtualisation.diskSize = app.vm.config.diskSize;
-                virtualisation.forwardPorts = forwardPortsAttrs app.vm.config.ports;
+                virtualisation.forwardPorts = app.vm.config.ports;
               }
             )
             {
