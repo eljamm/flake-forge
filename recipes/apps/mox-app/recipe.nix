@@ -1,7 +1,7 @@
 {
   config,
-  lib,
   pkgs,
+  lib,
   ...
 }:
 
@@ -10,19 +10,19 @@
   version = "0.0.15";
   description = "Modern full-featured open source secure mail server";
 
-  # usage = ''
-  #   Mox is a modern mail server that aims to be fully featured and easy to use.
-  #
-  #   * Quickstart (first time setup):
-  #   ```
-  #   mox quickstart hostname user@domain
-  #   ```
-  #
-  #   * Serve mail:
-  #   ```
-  #   mox -config /var/lib/mox/config/mox.conf serve
-  #   ```
-  # '';
+  usage = ''
+    Mox is a modern mail server that aims to be fully featured and easy to use.
+
+    * Quickstart (first time setup):
+    ```
+    mox quickstart hostname user@domain
+    ```
+
+    * Serve mail:
+    ```
+    mox -config /var/lib/mox/config/mox.conf serve
+    ```
+  '';
 
   programs = {
     enable = true;
@@ -54,7 +54,6 @@
     enable = true;
     system = {
       services.postgresql.enable = true;
-
       users.users.mox = {
         isSystemUser = true;
         name = "mox";
@@ -66,7 +65,6 @@
       users.groups.mox = { };
     };
     settings = { }; # Nimi settings
-    extraConfig = { }; # arbitrary NixOS config
     vm = {
       cores = 4;
       diskSize = 4096;
@@ -74,23 +72,4 @@
       ports = [ "8080:80" ];
     };
   };
-
-  # nixos = {
-  #   enable = true;
-  #   settings = { };
-  #   extraConfig = {
-  #     services.mox = {
-  #       imports = [ pkgs.mypkgs.mox.serviceModule ];
-  #       mox = {
-  #         package = pkgs.mypkgs.mox;
-  #         hostname = "mail.example.com";
-  #         user = "admin@example.com";
-  #       };
-  #     };
-  #   };
-  #   vm = { };
-  #
-  #   name = "mox-vm";
-  #   requirements = [ pkgs.mypkgs.mox ];
-  # };
 }

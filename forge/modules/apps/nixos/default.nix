@@ -41,6 +41,7 @@
       '';
     };
 
+    # TODO: wouldn't it be better to expose this at the top-level as `nimi` or something?
     settings = lib.mkOption {
       type = lib.types.attrsOf lib.types.anything;
       default = { };
@@ -50,18 +51,6 @@
           restart.mode = "always";
           restart.time = 1000;
           logging.enable = true;
-        }
-      '';
-    };
-
-    extraConfig = lib.mkOption {
-      type = lib.types.attrsOf lib.types.anything;
-      default = { };
-      description = "Arbitrary additional NixOS system configuration.";
-      example = lib.literalExpression ''
-        {
-          services.postgresql.enable = true;
-          services.openssh.enable = true;
         }
       '';
     };
