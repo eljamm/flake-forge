@@ -25,33 +25,19 @@
       description = "Nix packages to include in the VM.";
     };
 
-    config = {
-      system = lib.mkOption {
-        type = lib.types.attrsOf lib.types.anything;
-        default = { };
-        description = ''
-          NixOS system configuration (legacy format).
+    system = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
+      default = { };
+      description = ''
+        NixOS system configuration (legacy format).
 
-          See: https://search.nixos.org/options
-        '';
-        example = lib.literalExpression ''
-          {
-            services.postgresql.enable = true;
-          }
-        '';
-      };
-      ports = lib.mkOption {
-        type = lib.types.listOf (lib.types.strMatching "^[0-9]*:[0-9]*$");
-        default = [ ];
-        description = ''
-          List of ports to forward from host system to VM.
-
-          Format: HOST_PORT:VM_PORT
-        '';
-        example = lib.literalExpression ''
-          [ "10022:22" "5432:5432" "8000:90" ]
-        '';
-      };
+        See: https://search.nixos.org/options
+      '';
+      example = lib.literalExpression ''
+        {
+          services.postgresql.enable = true;
+        }
+      '';
     };
 
     settings = lib.mkOption {
