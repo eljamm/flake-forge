@@ -30,11 +30,15 @@ in
   };
 
   config = {
-    configData."config/mox.conf" = {
-    }
-    // lib.optionalAttrs (options ? systemd) {
-      source = "/var/lib/mox/config/mox.conf";
-    };
+    configData."config/mox.conf" =
+      # TODO: can we know specifically which target to use aside from systemd?
+      lib.optionalAttrs (!options ? systemd) {
+        source = lib.mkDefault "/config/mox.conf";
+        path = lib.mkDefault "/config/mox.conf";
+      }
+      // lib.optionalAttrs (options ? systemd) {
+        source = lib.mkForce "/var/lib/mox/config/mox.conf";
+      };
 
     process.argv = [
       (lib.getExe cfg.package)
