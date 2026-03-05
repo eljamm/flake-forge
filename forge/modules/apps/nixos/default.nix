@@ -152,5 +152,10 @@
         description = "NixOS Virtual Machine.";
       };
     };
+
+    __toString = lib.mkOption {
+      type = with lib.types; functionTo str;
+      default = self: "nixos-system-config";
+    };
   };
 }
