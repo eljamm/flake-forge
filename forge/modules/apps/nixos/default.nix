@@ -87,6 +87,16 @@
         '';
       };
 
+      build = lib.mkOption {
+        internal = true;
+        readOnly = true;
+        type = lib.types.package;
+        default = config.debug.eval.config.system.build.vm;
+        description = "NixOS Virtual Machine.";
+      };
+    };
+
+    debug = {
       eval = lib.mkOption {
         internal = true;
         readOnly = true;
@@ -94,16 +104,8 @@
         description = "NixOS system evaluation.";
       };
 
-      build = lib.mkOption {
-        internal = true;
-        readOnly = true;
-        type = lib.types.package;
-        default = config.vm.eval.config.system.build.vm;
-        description = "NixOS Virtual Machine.";
-      };
-
       # HACK:
-      # Prevent toJSON conversion from attempting to convert `nixos.vm.eval`,
+      # Prevent toJSON conversion from attempting to convert the `eval` option,
       # which won't work because it's a whole NixOS evaluation.
       __toString = lib.mkOption {
         internal = true;
@@ -115,7 +117,7 @@
   };
 
   config = {
-    vm.eval =
+    debug.eval =
       let
         forwardPortsAttrs =
           ports:
