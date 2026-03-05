@@ -139,10 +139,10 @@
               {
                 imports = [ (modulesPath + "/virtualisation/qemu-vm.nix") ];
                 virtualisation.graphics = false;
-                virtualisation.cores = app.vm.config.cores;
-                virtualisation.memorySize = app.vm.config.memorySize;
-                virtualisation.diskSize = app.vm.config.diskSize;
-                virtualisation.forwardPorts = app.vm.config.ports;
+                virtualisation.cores = config.vm.cores;
+                virtualisation.memorySize = config.vm.memorySize;
+                virtualisation.diskSize = config.vm.diskSize;
+                virtualisation.forwardPorts = config.vm.ports;
               }
             )
             {
