@@ -72,5 +72,31 @@
         '';
       description = ""; # TODO:
     };
+
+    debug = {
+      eval = lib.mkOption {
+        internal = true;
+        readOnly = true;
+        type = with lib.types; lazyAttrsOf (either attrs anything);
+        description = "NixOS system evaluation.";
+      };
+
+      # HACK:
+      # Prevent toJSON conversion from attempting to convert the `eval` option,
+      # which won't work because it's a whole NixOS evaluation.
+      __toString = lib.mkOption {
+        internal = true;
+        readOnly = true;
+        type = with lib.types; functionTo str;
+        default = self: "nixos-vm-config";
+      };
+    };
+  };
+
+  config = {
+    debug.eval = nimi.passthru.evalNimiModule {
+      inherit (app) services;
+      inherit (config) settings;
+    };
   };
 }
