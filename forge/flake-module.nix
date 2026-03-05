@@ -43,17 +43,16 @@
               # Use bundled import-tree from nix-forge inputs
               allLeafs = (inputs.import-tree.withLib lib).leafs dirPath;
 
-              excludedRegex = [
-                "service.*"
-                "test.*"
-                ".*\\.md"
-              ];
-
               recipeFiles = lib.filter (
                 filePath:
                 let
-                  fileName = baseNameOf (toString filePath);
-                  isExcluded = lib.any (regex: (lib.match regex fileName) != null) excludedRegex;
+                  excludedRegex = [
+                    ".*service.*"
+                    ".*test.*"
+                    ".*\\.md"
+                  ];
+
+                  isExcluded = lib.any (regex: (lib.match regex filePath) != null) excludedRegex;
                 in
                 !isExcluded
               ) allLeafs;
