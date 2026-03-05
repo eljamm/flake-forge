@@ -53,10 +53,10 @@
     composeFile = ./compose.yaml;
   };
 
-  vm = {
+  nixos = {
     enable = true;
     name = "database";
-    config.system = {
+    extraConfig = {
       # database service
       services.postgresql.enable = true;
       services.postgresql.enableTCPIP = true;
@@ -71,7 +71,7 @@
         "multi-user.target"
       ];
     };
-    config.ports = [
+    vm.ports = [
       "5000:5000"
     ];
   };
