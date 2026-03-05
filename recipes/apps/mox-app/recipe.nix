@@ -44,8 +44,21 @@
     settings = {
       container = {
         name = "mox";
-        copyToRoot = [ pkgs.mypkgs.mox ];
+        copyToRoot = [
+          (pkgs.buildEnv {
+            name = "runtime-bins";
+            paths = [
+              pkgs.mypkgs.mox
+              pkgs.coreutils
+              pkgs.bash
+            ];
+            pathsToLink = [ "/bin" ];
+          })
+        ];
       };
+      startup.runOnStartup = pkgs.writeScript "mox-setup" ''
+        /bin/mox quickstart -hostname mox 'admin@example.com'
+      '';
     };
     extraConfig = { };
   };
