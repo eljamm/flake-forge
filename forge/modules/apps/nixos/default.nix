@@ -27,7 +27,7 @@
     };
 
     system = lib.mkOption {
-      type = lib.types.attrsOf lib.types.anything;
+      type = with lib.types; lazyAttrsOf (either attrs anything);
       default = { };
       description = ''
         NixOS system configuration (legacy format).
