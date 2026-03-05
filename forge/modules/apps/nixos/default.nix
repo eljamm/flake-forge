@@ -101,7 +101,7 @@
       eval = lib.mkOption {
         internal = true;
         readOnly = true;
-        type = lib.types.lazyAttrsOf lib.types.attrs;
+        type = with lib.types; lazyAttrsOf (either attrs anything);
         description = "NixOS system evaluation.";
       };
 
