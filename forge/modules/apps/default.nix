@@ -84,7 +84,7 @@ in
                       }
                       // lib.optionalAttrs app.nixos.enable { vm = app.nixos.vm.build; }
                       // lib.optionalAttrs app.nixos.enable {
-                        nimi-bin = nimi.mkNimiBin { inherit (app) services; };
+                        shell = nimi.mkNimiBin { inherit (app) services; };
                       }
                       # TODO: remove
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; };
