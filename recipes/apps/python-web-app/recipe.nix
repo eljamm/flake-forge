@@ -32,29 +32,8 @@
     ```
   '';
 
-  programs = {
-    enable = true;
-    requirements = [
-      pkgs.curl
-    ];
-  };
-
   services.api = {
     imports = [ pkgs.mypkgs.python-web.services.default ];
-  };
-
-  containers = {
-    enable = true;
-    images = [
-      {
-        name = "api";
-        requirements = [ pkgs.mypkgs.python-web ];
-        config.CMD = [
-          "python-web"
-        ];
-      }
-    ];
-    composeFile = ./compose.yaml;
   };
 
   oci = {
@@ -99,4 +78,28 @@
       "5000:5000"
     ];
   };
+
+  # TODO: remove
+
+  # programs = {
+  #   enable = true;
+  #   requirements = [
+  #     pkgs.curl
+  #   ];
+  # };
+
+  # containers = {
+  #   enable = true;
+  #   images = [
+  #     {
+  #       name = "api";
+  #       requirements = [ pkgs.mypkgs.python-web ];
+  #       config.CMD = [
+  #         "python-web"
+  #       ];
+  #     }
+  #   ];
+  #   composeFile = ./compose.yaml;
+  # };
+
 }
