@@ -24,4 +24,11 @@
   test.script = ''
     hello | grep "Hello, world"
   '';
+
+  build.extraDrvAttrs = {
+    passthru.services.default = {
+      imports = [ ./service.nix ];
+      hello.package = pkgs.mypkgs.hello;
+    };
+  };
 }
