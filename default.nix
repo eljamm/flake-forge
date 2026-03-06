@@ -56,6 +56,13 @@ let
         value = v;
       }) default.output.forge.apps
     );
+
+    forgePkgs = lib.listToAttrs (
+      map (v: {
+        name = v.name;
+        value = v;
+      }) default.output.forge.packages
+    );
   });
 
   eval = module: (lib.evalModules { modules = [ module ]; });
