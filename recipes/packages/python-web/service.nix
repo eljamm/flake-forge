@@ -5,14 +5,14 @@
   ...
 }:
 let
-  cfg = config.python-web;
+  cfg = config.api;
 in
 {
   _class = "service";
 
   meta.maintainers = with lib.maintainers; [ ];
 
-  options.python-web = {
+  options.api = {
     package = lib.mkOption {
       description = "Package to use for python-web";
       defaultText = "The python-web package that provided this module.";
@@ -26,9 +26,9 @@ in
     ];
   }
   // lib.optionalAttrs (options ? systemd) {
-    systemd.services.python-web = {
-      script = toString config.process.argv;
+    systemd.services.api = {
       wantedBy = [ "multi-user.target" ];
+      script = "${toString config.process.argv}";
     };
   };
 }
