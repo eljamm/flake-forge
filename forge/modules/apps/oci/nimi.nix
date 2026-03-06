@@ -8,6 +8,7 @@
   options = {
     container = lib.mkOption {
       type = lib.types.submodule {
+        freeformType = with lib.types; lazyAttrsOf (attrsOf anything);
         options = {
           name = lib.mkOption {
             type = lib.types.str;
