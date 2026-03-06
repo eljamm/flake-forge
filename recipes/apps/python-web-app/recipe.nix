@@ -39,6 +39,10 @@
     ];
   };
 
+  services.api = {
+    imports = [ pkgs.mypkgs.python-web.services.default ];
+  };
+
   containers = {
     enable = true;
     images = [
@@ -50,6 +54,15 @@
         ];
       }
     ];
+    composeFile = ./compose.yaml;
+  };
+
+  oci = {
+    enable = true;
+    settings.container = {
+      name = "api";
+      copyToRoot = [ pkgs.mypkgs.python-web ];
+    };
     composeFile = ./compose.yaml;
   };
 

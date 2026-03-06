@@ -27,4 +27,13 @@
       pkgs.python3Packages.psycopg2
     ];
   };
+
+  build.extraDrvAttrs = {
+    passthru = {
+      services.default = {
+        imports = [ ./service.nix ];
+        python-web.package = pkgs.mypkgs.python-web;
+      };
+    };
+  };
 }
