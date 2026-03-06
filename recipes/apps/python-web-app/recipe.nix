@@ -61,7 +61,18 @@
     enable = true;
     settings.container = {
       name = "api";
-      copyToRoot = [ pkgs.mypkgs.python-web ];
+      copyToRoot = [
+        (pkgs.buildEnv {
+          name = "runtime-bins";
+          paths = [
+            pkgs.mypkgs.python-web
+            pkgs.coreutils
+            pkgs.bash
+          ];
+          pathsToLink = [ "/bin" ];
+        })
+      ];
+      imageConfig.WorkingDir = "/";
     };
     composeFile = ./compose.yaml;
   };
