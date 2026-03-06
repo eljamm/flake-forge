@@ -39,7 +39,7 @@
     };
   };
 
-  oci =
+  oci.mox =
     { config, ... }:
     let
       cfg = config.debug.eval.services.mox;

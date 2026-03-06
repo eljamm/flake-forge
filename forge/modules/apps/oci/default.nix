@@ -1,4 +1,6 @@
 {
+  name,
+
   config,
   pkgs,
   lib,
@@ -14,7 +16,10 @@
     '';
 
     settings = lib.mkOption {
-      type = lib.types.submodule ./nimi.nix;
+      type = lib.types.submodule {
+        imports = [ ./nimi.nix ];
+        _module.args.container-name = name;
+      };
       default = { };
       description = "Nimi settings for container generation.";
       example = lib.literalExpression ''

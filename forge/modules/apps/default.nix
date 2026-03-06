@@ -59,15 +59,19 @@ in
                     name = "${app.name}-${app.version}";
                     paths = app.programs.requirements;
                   };
+
+                  enabledContainers = lib.filterAttrs (name: value: value.enable) app.oci;
                 in
                 appDrv.overrideAttrs (
                   _: oldAttrs: {
                     passthru =
                       oldAttrs.passthru or { }
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
-                      // lib.optionalAttrs app.oci.enable {
-                        oci = app.oci.build;
-                        oci-image = app.oci.build-image;
+                      // {
+                        oci = lib.mapAttrs (name: value: {
+                          recipe = value.build;
+                          image = value.build-image;
+                        }) enabledContainers;
                       }
                       // lib.optionalAttrs app.nixos.enable { vm = app.nixos.vm.build; }
                       // lib.optionalAttrs app.nixos.enable {

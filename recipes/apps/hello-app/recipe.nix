@@ -17,6 +17,18 @@
     ];
   };
 
+  oci = {
+    hello-english = {
+      enable = true;
+      settings.container = {
+        # name = "hello-english";
+        copyToRoot = [ pkgs.mypkgs.hello ];
+        imageConfig.WorkingDir = "/";
+      };
+      composeFile = ./compose.yaml;
+    };
+  };
+
   containers = {
     enable = true;
     images = [

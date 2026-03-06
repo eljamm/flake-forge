@@ -36,7 +36,7 @@
     imports = [ pkgs.mypkgs.python-web.services.default ];
   };
 
-  oci = {
+  oci.api = {
     enable = true;
     settings.container = {
       name = "api";

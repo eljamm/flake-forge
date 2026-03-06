@@ -1,5 +1,7 @@
 {
   lib,
+
+  container-name,
   ...
 }:
 {
@@ -12,7 +14,7 @@
         options = {
           name = lib.mkOption {
             type = lib.types.str;
-            default = "nimi-container";
+            default = container-name;
             description = "The name of the generated image.";
           };
           tag = lib.mkOption {
