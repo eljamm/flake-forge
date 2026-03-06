@@ -17,6 +17,10 @@
     ];
   };
 
+  services.hello = {
+    imports = [ pkgs.mypkgs.hello.services.default ];
+  };
+
   oci = {
     hello-english = {
       enable = true;
@@ -24,7 +28,26 @@
         copyToRoot = [ pkgs.mypkgs.hello ];
         imageConfig.WorkingDir = "/";
       };
-      composeFile = ./compose.yaml;
+    };
+    hello-italian = {
+      enable = true;
+      settings.container = {
+        copyToRoot = [ pkgs.mypkgs.hello ];
+        imageConfig.WorkingDir = "/";
+      };
+      extraConfig = {
+        hello.hello.extraArgs = "--greeting Ciao";
+      };
+    };
+    hello-spanish = {
+      enable = true;
+      settings.container = {
+        copyToRoot = [ pkgs.mypkgs.hello ];
+        imageConfig.WorkingDir = "/";
+      };
+      extraConfig = {
+        hello.hello.extraArgs = "--greeting Hola";
+      };
     };
   };
 
