@@ -64,7 +64,16 @@
               };
 
               # Call each recipe file with extended arguments
-              callRecipes = map (file: import file (args // { pkgs = pkgsExtended; }));
+              callRecipes = map (
+                file:
+                let
+                  recipe = import file (args // { pkgs = pkgsExtended; });
+                in
+                # support fixed-point arguments
+                # https://github.com/NixOS/nixpkgs/blob/master/doc/build-helpers/fixed-point-arguments.chapter.md
+                # https://noogle.dev/f/lib/fix
+                if lib.isFunction recipe then lib.fix recipe else recipe
+              );
             in
             callRecipes recipeFiles;
 
