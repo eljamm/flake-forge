@@ -77,7 +77,7 @@ in
                       // {
                         oci = {
                           images = containers;
-                          build-all = pkgs.writeShellScript "build-images" (
+                          build-all = pkgs.writeShellScriptBin "build-images" (
                             lib.concatLines (map (c: c.build) (lib.attrValues containers))
                           );
                         };
