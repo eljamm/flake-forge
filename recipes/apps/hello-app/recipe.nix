@@ -10,7 +10,7 @@
   version = "1.0.0";
   description = "Say hello in multiple languages.";
 
-  services.hello = {
+  services.default = {
     imports = [ pkgs.mypkgs.hello.services.default ];
   };
 
@@ -35,7 +35,7 @@
       hello-english = {
         enable = true;
         settings.container = commonSettings;
-        extraConfig.services.hello.hello.extraArgs = [
+        extraConfig.services.default.hello.extraArgs = [
           "--greeting"
           "Hello"
         ];
@@ -43,7 +43,7 @@
       hello-italian = {
         enable = true;
         settings.container = commonSettings;
-        extraConfig.services.hello.hello.extraArgs = [
+        extraConfig.services.default.hello.extraArgs = [
           "--greeting"
           "Ciao"
         ];
@@ -51,7 +51,7 @@
       hello-spanish = {
         enable = true;
         settings.container = commonSettings;
-        extraConfig.services.hello.hello.extraArgs = [
+        extraConfig.services.default.hello.extraArgs = [
           "--greeting"
           "Hola"
         ];
