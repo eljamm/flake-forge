@@ -20,7 +20,15 @@ in
     };
   };
 
-  config.process.argv = [
-    (lib.getExe cfg.package)
-  ];
+  config = {
+    process.argv = [
+      (lib.getExe cfg.package)
+    ];
+  }
+  // lib.optionalAttrs (options ? systemd) {
+    systemd.services.python-web = {
+      script = toString config.process.argv;
+      wantedBy = [ "multi-user.target" ];
+    };
+  };
 }

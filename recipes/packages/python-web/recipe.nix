@@ -29,11 +29,9 @@
   };
 
   build.extraDrvAttrs = {
-    passthru = {
-      services.default = {
-        imports = [ ./service.nix ];
-        python-web.package = pkgs.mypkgs.python-web;
-      };
+    passthru.services.default = {
+      imports = [ ./service.nix ];
+      python-web.package = pkgs.mypkgs.python-web;
     };
   };
 }

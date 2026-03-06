@@ -43,10 +43,10 @@
       copyToRoot = [
         (pkgs.buildEnv {
           name = "runtime-bins";
-          paths = [
-            pkgs.mypkgs.python-web
-            pkgs.coreutils
-            pkgs.bash
+          paths = with pkgs; [
+            mypkgs.python-web
+            coreutils
+            bash
           ];
           pathsToLink = [ "/bin" ];
         })
@@ -68,11 +68,6 @@
         host all all 0.0.0.0/0 trust
         host all all ::0/0 trust
       '';
-      # api service
-      systemd.services.api.script = "${pkgs.mypkgs.python-web}/bin/python-web";
-      systemd.services.api.wantedBy = [
-        "multi-user.target"
-      ];
     };
     vm.ports = [
       "5000:5000"
