@@ -48,7 +48,6 @@
       enable = true;
       settings = {
         container = {
-          name = "mox";
           copyToRoot = [
             (pkgs.buildEnv {
               name = "runtime-bins";

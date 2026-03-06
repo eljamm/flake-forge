@@ -39,7 +39,6 @@
   oci.api = {
     enable = true;
     settings.container = {
-      name = "api";
       copyToRoot = [
         (pkgs.buildEnv {
           name = "runtime-bins";
