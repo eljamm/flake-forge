@@ -100,7 +100,7 @@
         internal = true;
         readOnly = true;
         type = with lib.types; functionTo str;
-        default = self: "nixos-vm-config";
+        default = self: "oci-config";
       };
     };
   };
