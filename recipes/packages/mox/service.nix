@@ -54,6 +54,7 @@ in
         "-hostname"
         cfg.hostname
         cfg.user
+        "0" # root UID
       ];
     }
     // lib.optionalAttrs (options ? systemd) {
@@ -69,8 +70,6 @@ in
           WorkingDirectory = "/var/lib/mox";
           Type = "oneshot";
           RemainAfterExit = true;
-          User = "mox";
-          Group = "mox";
           # TODO: no idea who set it to always
           Restart = "no";
         };

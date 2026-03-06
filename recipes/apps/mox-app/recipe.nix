@@ -62,8 +62,7 @@
           ];
         };
         startup.runOnStartup = pkgs.writeShellScript "mox-setup" ''
-          USER_UID=0
-          ${toString cfg.services.setup.process.argv} $USER_UID
+          ${toString cfg.services.setup.process.argv}
         '';
       };
       extraConfig = { };
@@ -74,15 +73,6 @@
     settings = { }; # Nimi settings
     extraConfig = {
       services.postgresql.enable = true;
-      users.users.mox = {
-        isSystemUser = true;
-        name = "mox";
-        group = "mox";
-        home = "/var/lib/mox";
-        createHome = true;
-        description = "Mox Mail Server User";
-      };
-      users.groups.mox = { };
     };
     vm = {
       cores = 4;
