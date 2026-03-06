@@ -19,9 +19,12 @@ in
       type = lib.types.package;
     };
     extraArgs = lib.mkOption {
-      type = lib.types.singleLineStr;
-      default = "--greeting Hello";
-      example = "--greeting World";
+      type = lib.types.listOf lib.types.singleLineStr;
+      default = [ ];
+      example = [
+        "--greeting"
+        "Hello"
+      ];
       description = ''
         Extra arguments for hello.
       '';
@@ -31,7 +34,7 @@ in
   config = {
     process.argv = [
       (lib.getExe cfg.package)
-      cfg.extraArgs
-    ];
+    ]
+    ++ cfg.extraArgs;
   };
 }
