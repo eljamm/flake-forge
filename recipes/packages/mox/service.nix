@@ -66,7 +66,7 @@ in
         before = [ "mox.service" ];
         serviceConfig = {
           StateDirectory = "mox";
-          WorkingDirectory = "%S/mox";
+          WorkingDirectory = "/var/lib/mox";
           Type = "oneshot";
           RemainAfterExit = true;
           User = "mox";
@@ -84,10 +84,8 @@ in
       after = [ "mox-setup.service" ];
       requires = [ "mox-setup.service" ];
       serviceConfig = {
-        User = "mox";
-        Group = "mox";
         StateDirectory = "mox";
-        WorkingDirectory = "%S/mox";
+        WorkingDirectory = "/var/lib/mox";
         Restart = "always";
       };
     };
