@@ -5,7 +5,7 @@
   ...
 }:
 
-{
+finalAttrs: {
   name = "hello-app";
   version = "1.0.0";
   description = "Say hello in multiple languages.";
@@ -14,9 +14,10 @@
     imports = [ pkgs.mypkgs.hello.services.default ];
   };
 
-  oci =
-    let
-      commonSettings = {
+  oci = {
+    hello-english = {
+      enable = true;
+      settings.container = {
         copyToRoot = [
           (pkgs.buildEnv {
             name = "runtime-bins";
@@ -30,33 +31,28 @@
         ];
         imageConfig.WorkingDir = "/";
       };
-    in
-    {
-      hello-english = {
-        enable = true;
-        settings.container = commonSettings;
-        extraConfig.services.default.hello.extraArgs = [
-          "--greeting"
-          "Hello"
-        ];
-      };
-      hello-italian = {
-        enable = true;
-        settings.container = commonSettings;
-        extraConfig.services.default.hello.extraArgs = [
-          "--greeting"
-          "Ciao"
-        ];
-      };
-      hello-spanish = {
-        enable = true;
-        settings.container = commonSettings;
-        extraConfig.services.default.hello.extraArgs = [
-          "--greeting"
-          "Hola"
-        ];
-      };
+      extraConfig.services.default.hello.extraArgs = [
+        "--greeting"
+        "Hello"
+      ];
     };
+    hello-italian = {
+      enable = true;
+      settings.container = finalAttrs.oci.hello-english.settings.container;
+      extraConfig.services.default.hello.extraArgs = [
+        "--greeting"
+        "Ciao"
+      ];
+    };
+    hello-spanish = {
+      enable = true;
+      settings.container = finalAttrs.oci.hello-english.settings.container;
+      extraConfig.services.default.hello.extraArgs = [
+        "--greeting"
+        "Hola"
+      ];
+    };
+  };
 
   # TODO: remove
 
