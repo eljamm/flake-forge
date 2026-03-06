@@ -21,15 +21,10 @@ finalAttrs: {
         copyToRoot = [
           (pkgs.buildEnv {
             name = "runtime-bins";
-            paths = with pkgs; [
-              mypkgs.hello
-              coreutils
-              bash
-            ];
+            paths = [ pkgs.mypkgs.hello ];
             pathsToLink = [ "/bin" ];
           })
         ];
-        imageConfig.WorkingDir = "/";
       };
       extraConfig.services.default.hello.extraArgs = [
         "--greeting"
