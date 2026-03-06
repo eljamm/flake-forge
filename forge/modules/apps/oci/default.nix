@@ -57,8 +57,15 @@
       readOnly = true;
       type = lib.types.nullOr lib.types.package;
       default = nimi.mkContainerImage {
-        inherit (config) settings;
-        services = lib.recursiveUpdate app.services (config.extraConfig.services or { });
+        config = {
+          inherit (config) settings;
+          services = lib.recursiveUpdate app.services (config.extraConfig.services or { });
+        };
+
+        options.nimi = lib.mkOption {
+          type = with lib.types; lazyAttrsOf (attrsOf anything);
+          default = { };
+        };
       };
       description = ""; # TODO:
     };
@@ -100,8 +107,15 @@
 
   config = {
     debug.eval = nimi.passthru.evalNimiModule {
-      inherit (config) settings;
-      services = lib.recursiveUpdate app.services (config.extraConfig.services or { });
+      config = {
+        inherit (config) settings;
+        services = lib.recursiveUpdate app.services (config.extraConfig.services or { });
+      };
+
+      options.nimi = lib.mkOption {
+        type = with lib.types; lazyAttrsOf (attrsOf anything);
+        default = { };
+      };
     };
   };
 }

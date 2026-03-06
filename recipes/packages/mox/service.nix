@@ -32,7 +32,7 @@ in
   config = {
     configData."config/mox.conf" =
       # TODO: can we know specifically which target to use aside from systemd?
-      lib.optionalAttrs (!options ? systemd) {
+      lib.optionalAttrs (options ? nimi) {
         source = lib.mkDefault "/root/config/mox.conf";
         path = lib.mkDefault "/etc/mox/mox.conf";
       }
