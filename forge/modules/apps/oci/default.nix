@@ -71,7 +71,7 @@
         let
           inherit (config.settings) container;
         in
-        pkgs.writeScriptBin "build-oci" ''
+        pkgs.writeShellScript "build-oci" ''
           ${config.build.copyTo}/bin/copy-to \
             oci-archive:${container.name}.tar:${container.name}:${container.tag}
         '';

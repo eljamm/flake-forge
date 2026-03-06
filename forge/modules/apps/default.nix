@@ -60,7 +60,15 @@ in
                     paths = app.programs.requirements;
                   };
 
-                  enabledContainers = lib.filterAttrs (name: value: value.enable) app.oci;
+                  containers = lib.pipe app.oci [
+                    (lib.filterAttrs (name: value: value.enable))
+                    (lib.mapAttrs (
+                      name: value: {
+                        recipe = value.build;
+                        build = value.build-image;
+                      }
+                    ))
+                  ];
                 in
                 appDrv.overrideAttrs (
                   _: oldAttrs: {
@@ -68,10 +76,12 @@ in
                       oldAttrs.passthru or { }
                       // lib.optionalAttrs app.containers.enable { containers = app.containers.build; }
                       // {
-                        oci = lib.mapAttrs (name: value: {
-                          recipe = value.build;
-                          image = value.build-image;
-                        }) enabledContainers;
+                        oci = {
+                          images = containers;
+                          build-all = pkgs.writeShellScript "build-images" (
+                            lib.concatLines (map (c: c.build) (lib.attrValues containers))
+                          );
+                        };
                       }
                       // lib.optionalAttrs app.nixos.enable { vm = app.nixos.vm.build; }
                       // lib.optionalAttrs app.nixos.enable {
