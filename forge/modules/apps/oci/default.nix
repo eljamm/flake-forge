@@ -57,8 +57,25 @@
       readOnly = true;
       type = lib.types.nullOr lib.types.package;
       default = nimi.mkContainerImage {
-        inherit (config) settings;
-        services = lib.recursiveUpdate app.services (config.extraConfig.services or { });
+        config = {
+          inherit (config) settings;
+          services =
+            lib.mapAttrs (serviceName: service: {
+              imports = [
+                service
+                (config.extraConfig.services.${serviceName} or { })
+              ];
+              options.nimi = lib.mkOption {
+                type = with lib.types; lazyAttrsOf (attrsOf anything);
+                default = { };
+                description = ''
+                  Let the modular service know that it's evaluated for nimi,
+                  by testing `options ? nimi`.
+                '';
+              };
+            }) app.services
+            // lib.removeAttrs (config.extraConfig.services or { }) (lib.attrNames app.services);
+        };
       };
       description = ""; # TODO:
     };
@@ -100,8 +117,25 @@
 
   config = {
     debug.eval = nimi.passthru.evalNimiModule {
-      inherit (config) settings;
-      services = lib.recursiveUpdate app.services (config.extraConfig.services or { });
+      config = {
+        inherit (config) settings;
+        services =
+          lib.mapAttrs (serviceName: service: {
+            imports = [
+              service
+              (config.extraConfig.services.${serviceName} or { })
+            ];
+            options.nimi = lib.mkOption {
+              type = with lib.types; lazyAttrsOf (attrsOf anything);
+              default = { };
+              description = ''
+                Let the modular service know that it's evaluated for nimi,
+                by testing `options ? nimi`.
+              '';
+            };
+          }) app.services
+          // lib.removeAttrs (config.extraConfig.services or { }) (lib.attrNames app.services);
+      };
     };
   };
 }
