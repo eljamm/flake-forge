@@ -5,7 +5,9 @@
   ...
 }:
 
-finalAttrs: {
+recipe:
+
+{
   name = "hello-app";
   version = "1.0.0";
   description = "Say hello in multiple languages.";
@@ -33,7 +35,7 @@ finalAttrs: {
     };
     hello-italian = {
       enable = true;
-      settings.container = finalAttrs.oci.hello-english.settings.container;
+      settings.container = recipe.oci.hello-english.settings.container;
       extraConfig.services.default.hello.extraArgs = [
         "--greeting"
         "Ciao"
@@ -41,7 +43,7 @@ finalAttrs: {
     };
     hello-spanish = {
       enable = true;
-      settings.container = finalAttrs.oci.hello-english.settings.container;
+      settings.container = recipe.oci.hello-english.settings.container;
       extraConfig.services.default.hello.extraArgs = [
         "--greeting"
         "Hola"
