@@ -56,7 +56,7 @@
       internal = true;
       readOnly = true;
       type = lib.types.nullOr lib.types.package;
-      default = nimi.mkContainerImage config.debug.nimi-config;
+      default = nimi.mkContainerImage config.debug.nimi.config;
       description = ""; # TODO:
     };
 
@@ -76,18 +76,10 @@
     };
 
     debug = {
-      nimi-config = lib.mkOption {
+      nimi = lib.mkOption {
         internal = true;
         readOnly = true;
         type = with lib.types; lazyAttrsOf (either attrs anything);
-        description = "NixOS system evaluation.";
-      };
-
-      eval = lib.mkOption {
-        internal = true;
-        readOnly = true;
-        type = with lib.types; lazyAttrsOf (either attrs anything);
-        default = nimi.passthru.evalNimiModule config.debug.nimi-config;
         description = "NixOS system evaluation.";
       };
 
@@ -104,7 +96,7 @@
   };
 
   config = {
-    debug.nimi-config = {
+    debug.nimi.config = {
       config = {
         inherit (config) settings;
         services =
@@ -125,5 +117,6 @@
           // lib.removeAttrs (config.extraConfig.services or { }) (lib.attrNames app.services);
       };
     };
+    debug.nimi.eval = nimi.passthru.evalNimiModule config.debug.nimi.config;
   };
 }

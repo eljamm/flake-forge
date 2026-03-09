@@ -42,7 +42,7 @@
   oci.mox =
     { config, ... }:
     let
-      cfg = config.debug.eval.services.mox;
+      cfg = config.debug.nimi.eval.services.mox;
     in
     {
       enable = true;
