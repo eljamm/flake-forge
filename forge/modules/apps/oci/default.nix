@@ -56,7 +56,7 @@
       internal = true;
       readOnly = true;
       type = lib.types.nullOr lib.types.package;
-      default = nimi.mkContainerImage config.debug.nimi.config;
+      default = nimi.mkContainerImage { inherit (config.debug.nimi) config; };
       description = ""; # TODO:
     };
 
@@ -96,27 +96,30 @@
   };
 
   config = {
-    debug.nimi.config = {
-      config = {
-        inherit (config) settings;
-        services =
-          lib.mapAttrs (serviceName: service: {
-            imports = [
-              service
-              (config.extraConfig.services.${serviceName} or { })
-            ];
-            options.nimi = lib.mkOption {
-              type = with lib.types; lazyAttrsOf (attrsOf anything);
-              default = { };
-              description = ''
-                Let the modular service know that it's evaluated for nimi,
-                by testing `options ? nimi`.
-              '';
-            };
-          }) app.services
-          // lib.removeAttrs (config.extraConfig.services or { }) (lib.attrNames app.services);
+    debug.nimi.config =
+      let
+        nimiModule = {
+          options.nimi = lib.mkOption {
+            type = with lib.types; lazyAttrsOf (attrsOf anything);
+            default = { };
+            description = ''
+              Let the modular service know that it's evaluated for nimi,
+              by testing `options ? nimi`.
+            '';
+          };
+        };
+      in
+      {
+        settings = config.settings;
+        services = lib.mapAttrs (serviceName: service: {
+          imports = [
+            service
+            nimiModule
+            (config.extraConfig.services.${serviceName} or { })
+          ];
+        }) app.services;
       };
-    };
-    debug.nimi.eval = nimi.passthru.evalNimiModule config.debug.nimi.config;
+
+    debug.nimi.eval = nimi.passthru.evalNimiModule { inherit (config.debug.nimi) config; };
   };
 }
