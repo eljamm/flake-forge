@@ -52,6 +52,14 @@
       example = "./compose.yaml";
     };
 
+    nimi = lib.mkOption {
+      internal = true;
+      readOnly = true;
+      type = with lib.types; lazyAttrsOf (attrsOf anything);
+      default = nimi.passthru.evalNimiModule { inherit (config.debug.nimi) config; };
+      description = "Portable service definitions using NixOS modular services.";
+    };
+
     build = lib.mkOption {
       internal = true;
       readOnly = true;
