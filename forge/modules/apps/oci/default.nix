@@ -56,27 +56,7 @@
       internal = true;
       readOnly = true;
       type = lib.types.nullOr lib.types.package;
-      default = nimi.mkContainerImage {
-        config = {
-          inherit (config) settings;
-          services =
-            lib.mapAttrs (serviceName: service: {
-              imports = [
-                service
-                (config.extraConfig.services.${serviceName} or { })
-              ];
-              options.nimi = lib.mkOption {
-                type = with lib.types; lazyAttrsOf (attrsOf anything);
-                default = { };
-                description = ''
-                  Let the modular service know that it's evaluated for nimi,
-                  by testing `options ? nimi`.
-                '';
-              };
-            }) app.services
-            // lib.removeAttrs (config.extraConfig.services or { }) (lib.attrNames app.services);
-        };
-      };
+      default = nimi.mkContainerImage config.debug.nimi-config;
       description = ""; # TODO:
     };
 
@@ -96,10 +76,18 @@
     };
 
     debug = {
+      nimi-config = lib.mkOption {
+        internal = true;
+        readOnly = true;
+        type = with lib.types; lazyAttrsOf (either attrs anything);
+        description = "NixOS system evaluation.";
+      };
+
       eval = lib.mkOption {
         internal = true;
         readOnly = true;
         type = with lib.types; lazyAttrsOf (either attrs anything);
+        default = nimi.passthru.evalNimiModule config.debug.nimi-config;
         description = "NixOS system evaluation.";
       };
 
@@ -116,7 +104,7 @@
   };
 
   config = {
-    debug.eval = nimi.passthru.evalNimiModule {
+    debug.nimi-config = {
       config = {
         inherit (config) settings;
         services =
