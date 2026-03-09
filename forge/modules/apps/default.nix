@@ -37,7 +37,7 @@ in
               default = [ ];
               description = "List of applications.";
               # TODO: attrs instead of list?
-              type = lib.types.listOf (
+              type = lib.types.attrsOf (
                 lib.types.submodule {
                   imports = [ ./app-item.nix ];
                   _module.args.pkgs = pkgs;
@@ -91,12 +91,7 @@ in
                   }
                 );
 
-              allApps = lib.listToAttrs (
-                map (app: {
-                  name = "${app.name}";
-                  value = shellBundle app;
-                }) config.forge.apps
-              );
+              allApps = lib.mapAttrs (_: shellBundle) config.forge.apps;
             in
             allApps;
 

@@ -67,22 +67,25 @@
               callRecipes = map (
                 file:
                 let
-                  recipe = import file (args // { pkgs = pkgsExtended; });
+                  raw-recipe = import file (args // { pkgs = pkgsExtended; });
+
+                  # fixed-point arguments
+                  # https://noogle.dev/f/lib/fix
+                  recipe = if lib.isFunction raw-recipe then lib.fix raw-recipe else raw-recipe;
                 in
-                # support fixed-point arguments
-                # https://github.com/NixOS/nixpkgs/blob/master/doc/build-helpers/fixed-point-arguments.chapter.md
-                # https://noogle.dev/f/lib/fix
-                if lib.isFunction recipe then lib.fix recipe else recipe
+                {
+                  ${recipe.name} = recipe;
+                }
               );
             in
-            callRecipes recipeFiles;
+            lib.mergeAttrsList (callRecipes recipeFiles);
 
         # Load package and app recipes from configured directories
         packageRecipes = loadRecipes config.forge.recipeDirs.packages;
         appRecipes = loadRecipes config.forge.recipeDirs.apps;
       in
       {
-        forge.packages = packageRecipes;
+        forge.packages = lib.attrValues packageRecipes;
         forge.apps = appRecipes;
       };
   };

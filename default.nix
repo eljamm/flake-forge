@@ -50,12 +50,7 @@ let
 
     output = flake.outputs.allSystems.x86_64-linux;
 
-    apps = lib.listToAttrs (
-      map (v: {
-        name = v.name;
-        value = v;
-      }) default.output.forge.apps
-    );
+    apps = default.output.forge.apps;
 
     forgePkgs = lib.listToAttrs (
       map (v: {
