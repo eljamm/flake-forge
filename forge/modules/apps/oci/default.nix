@@ -55,7 +55,7 @@
     nimi = lib.mkOption {
       internal = true;
       readOnly = true;
-      type = with lib.types; lazyAttrsOf (attrsOf anything);
+      type = with lib.types; lazyAttrsOf (either attrs anything);
       default = nimi.passthru.evalNimiModule { inherit (config.debug.nimi) config; };
       description = "Portable service definitions using NixOS modular services.";
     };
