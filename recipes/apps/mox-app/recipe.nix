@@ -24,13 +24,6 @@
     ```
   '';
 
-  programs = {
-    enable = true;
-    requirements = [
-      pkgs.mypkgs.mox
-    ];
-  };
-
   services.mox = {
     imports = [ pkgs.mypkgs.mox.services.default ];
     mox = {
@@ -50,24 +43,17 @@
     {
       enable = true;
       settings = {
-        container = {
-          copyToRoot = [
-            (pkgs.buildEnv {
-              name = "runtime-bins";
-              paths = [
-                pkgs.mypkgs.mox
-                pkgs.coreutils
-                pkgs.bash
-              ];
-              pathsToLink = [ "/bin" ];
-            })
-          ];
-        };
+        container.copyToRoot = [
+          (pkgs.buildEnv {
+            name = "runtime-bins";
+            paths = with pkgs; [ mypkgs.mox ];
+            pathsToLink = [ "/bin" ];
+          })
+        ];
         startup.runOnStartup = pkgs.writeShellScript "mox-setup" ''
           ${toString cfg.services.setup.process.argv}
         '';
       };
-      extraConfig = { };
     };
 
   nixos = {
@@ -83,4 +69,11 @@
       ports = [ "9191:80" ];
     };
   };
+
+  # programs = {
+  #   enable = true;
+  #   requirements = [
+  #     pkgs.mypkgs.mox
+  #   ];
+  # };
 }
