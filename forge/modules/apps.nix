@@ -92,6 +92,14 @@ in
                       };
                     };
 
+                    # Portable services configuration
+                    # https://nixos.org/manual/nixos/unstable/#modular-services
+                    services = lib.mkOption {
+                      type = lib.types.lazyAttrsOf lib.types.attrs;
+                      default = { };
+                      description = "Portable service definitions using NixOS modular services.";
+                    };
+
                     # Container configuration
                     containers = {
                       enable = lib.mkEnableOption ''
