@@ -22,6 +22,7 @@ in
         config,
         pkgs,
         nimi,
+        system,
         ...
       }:
       let
@@ -41,7 +42,14 @@ in
               description = "List of applications.";
               type = lib.types.listOf (
                 lib.types.submoduleWith {
-                  specialArgs = { inherit inputs pkgs nimi; };
+                  specialArgs = {
+                    inherit
+                      inputs
+                      pkgs
+                      nimi
+                      system
+                      ;
+                  };
                   modules = [ ./app.nix ];
                 }
               );
@@ -152,6 +160,7 @@ in
               { }
               // lib.optionalAttrs app.container.enable { container = app.container.result.imageBuilder; }
               // lib.optionalAttrs app.containers.enable { containers = containerBundle app; }
+              // lib.optionalAttrs app.nixos.enable { nixos-vm = app.nixos.result.build; }
               // lib.optionalAttrs app.vm.enable { vm = nixosVm app; };
 
             allApps = lib.listToAttrs (

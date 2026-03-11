@@ -5,6 +5,7 @@
   inputs,
   nimi,
   pkgs,
+  system,
   ...
 }:
 {
@@ -82,6 +83,19 @@
       description = "Container configuration.";
     };
 
+    # NixOS/VM configuration
+    nixos = lib.mkOption {
+      type = lib.types.submodule {
+        imports = [ ./nixos ];
+        _module.args.app = config;
+        _module.args.inputs = inputs;
+        _module.args.system = system;
+      };
+      default = { };
+      description = "NixOS system configuration.";
+    };
+
+    # TODO: replace with NixOS
     # Virtual machine
     vm = lib.mkOption {
       type = lib.types.submodule {
