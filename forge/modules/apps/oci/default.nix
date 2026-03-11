@@ -60,30 +60,30 @@
       description = "Portable service definitions using NixOS modular services.";
     };
 
-    build = lib.mkOption {
-      internal = true;
-      readOnly = true;
-      type = lib.types.nullOr lib.types.package;
-      default = nimi.mkContainerImage { inherit (config.debug.nimi) config; };
-      description = ""; # TODO:
-    };
-
-    build-image = lib.mkOption {
-      internal = true;
-      readOnly = true;
-      type = lib.types.package;
-      default =
-        let
-          inherit (config.settings) container;
-        in
-        pkgs.writeShellScript "build-oci" ''
-          ${config.build.copyTo}/bin/copy-to \
-            oci-archive:${container.name}.tar:${container.name}:${container.tag}
-        '';
-      description = ""; # TODO:
-    };
-
     debug = {
+      build = lib.mkOption {
+        internal = true;
+        readOnly = true;
+        type = lib.types.nullOr lib.types.package;
+        default = nimi.mkContainerImage { inherit (config.debug.nimi) config; };
+        description = ""; # TODO:
+      };
+
+      build-image = lib.mkOption {
+        internal = true;
+        readOnly = true;
+        type = lib.types.package;
+        default =
+          let
+            inherit (config.settings) container;
+          in
+          pkgs.writeShellScript "build-oci" ''
+            ${config.build.copyTo}/bin/copy-to \
+              oci-archive:${container.name}.tar:${container.name}:${container.tag}
+          '';
+        description = ""; # TODO:
+      };
+
       nimi = lib.mkOption {
         internal = true;
         readOnly = true;

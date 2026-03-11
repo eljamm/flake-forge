@@ -64,8 +64,8 @@ in
                     (lib.filterAttrs (name: value: value.enable))
                     (lib.mapAttrs (
                       name: value: {
-                        recipe = value.build;
-                        build = value.build-image;
+                        recipe = value.debug.build;
+                        build = value.debug.build-image;
                       }
                     ))
                   ];
@@ -82,12 +82,12 @@ in
                           );
                         };
                       }
-                      // lib.optionalAttrs app.nixos.enable { vm = app.nixos.vm.build; }
+                      // lib.optionalAttrs app.nixos.enable { vm = app.nixos.debug.build; }
                       // lib.optionalAttrs app.nixos.enable {
                         shell = nimi.mkNimiBin { inherit (app) services; };
                       }
                       # TODO: remove
-                      // lib.optionalAttrs app.containers.enable { containers = app.containers.build; };
+                      // lib.optionalAttrs app.containers.enable { containers = app.containers.debug.build; };
                   }
                 );
 

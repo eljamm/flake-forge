@@ -91,7 +91,9 @@
             }
           ) self;
       };
+    };
 
+    debug = {
       build = lib.mkOption {
         internal = true;
         readOnly = true;
@@ -99,9 +101,7 @@
         default = config.debug.eval.config.system.build.vm;
         description = "NixOS Virtual Machine.";
       };
-    };
 
-    debug = {
       eval = lib.mkOption {
         internal = true;
         readOnly = true;
