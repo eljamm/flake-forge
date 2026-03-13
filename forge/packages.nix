@@ -54,5 +54,37 @@
           buildElmApplication = (inputs.elm2nix.lib.elm2nix pkgs).buildElmApplication;
         };
       };
+
+      forge.appsFilter =
+        let
+          optionNames = lib.attrNames forgeOptions.optionsNix;
+
+          # NOTE: don't forget to update these, if they change
+          commonOptions = [
+            "apps.*.name"
+            "apps.*.version"
+            "apps.*.description"
+            "apps.*.usage"
+          ];
+
+          filterOptions = pred: lib.filter pred optionNames;
+
+          getOptions =
+            appType:
+            let
+              pattern = "apps\\.\\*\\.${appType}(\\..+)?";
+              matchedOptions = filterOptions (name: lib.match pattern name != null);
+              combinedOptions = commonOptions ++ matchedOptions;
+            in
+            lib.unique combinedOptions;
+        in
+        lib.mkDefault (
+          lib.genAttrs [
+            "container"
+            "nixos"
+            "programs"
+            "services"
+          ] getOptions
+        );
     };
 }
