@@ -160,10 +160,17 @@
 
           system.stateVersion = "25.11";
         }
-        {
-          # modular services
-          system = { inherit (app) services; };
-        }
+        (
+          let
+            # TODO: is there a more robust way of doing this?
+            # configData."*".path -> remove
+            filterServices = lib.filterAttrsRecursive (name: value: name != "path") app.services;
+          in
+          {
+            # modular services
+            system.services = filterServices;
+          }
+        )
         config.extraConfig
       ];
     };
