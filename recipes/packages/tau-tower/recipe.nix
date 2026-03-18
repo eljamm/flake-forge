@@ -29,6 +29,13 @@
     cargoHash = "sha256-5BAL5A78LIgr5G50aU1TXl19qkKiUPPVJn/QogfRMKI=";
   };
 
+  build.extraDrvAttrs = {
+    passthru.services.default = {
+      imports = [ (lib.modules.importApply ./service { inherit pkgs; }) ];
+      tau-tower.package = pkgs.mypkgs.tau-tower;
+    };
+  };
+
   test.script = ''
     tau-tower --version
   '';
