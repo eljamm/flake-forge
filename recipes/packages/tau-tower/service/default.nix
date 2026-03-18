@@ -92,10 +92,6 @@ in
     ];
 
     # TODO: handle password file with configData
-
-    process.argv = [
-      (lib.getExe cfg.package)
-    ];
   }
   // lib.optionalAttrs (options ? systemd) {
     systemd.service = {
@@ -119,9 +115,11 @@ in
       after = [ "network.target" ];
       environment.XDG_CONFIG_HOME = "/var/lib/tau-tower";
       preStart = ''
-        mkdir -p $XDG_CONFIG_HOME/tau
-        cp ${configFile} $XDG_CONFIG_HOME/tau/tower.toml
+        install -Dm600 ${configFile} $XDG_CONFIG_HOME/tau/tower.toml
         sed -i "s/@password@/$(cat $CREDENTIALS_DIRECTORY/password_file)/" $XDG_CONFIG_HOME/tau/tower.toml
+      '';
+      postStop = ''
+        rm -f $XDG_CONFIG_HOME/tau/tower.toml
       '';
     };
   };
