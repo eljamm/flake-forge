@@ -37,7 +37,7 @@
 
     configData."credstore/tau.PASSWORD" = {
       source = lib.mkDefault "/etc/credstore/tau.PASSWORD";
-      path = "tau.PASSWORD";
+      path = lib.mkDefault "/etc/tau/password";
     };
   };
 
@@ -52,7 +52,18 @@
   container = {
     enable = true;
     name = "tau-tower";
-    requirements = [ pkgs.mypkgs.tau-tower ];
+    requirements = [
+      pkgs.mypkgs.tau-tower
+      pkgs.bash
+      pkgs.coreutils
+      pkgs.gnused
+    ];
+    imageConfig.WorkingDir = "/";
+    imageConfig.Env = [ "XDG_CONFIG_HOME=/" ];
+    startup = pkgs.writeShellScript "mox-setup" ''
+      install -Dm600 /tau/tower-host.toml /tau/tower.toml
+      sed -i "s/@password@/$(cat /etc/credstore/tau.PASSWORD)/" /tau/tower.toml
+    '';
     composeFile = ./compose.yaml;
   };
 
