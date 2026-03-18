@@ -75,6 +75,22 @@ in
   };
 
   config = {
+    assertions = [
+      {
+        assertion = cfg.settings.password == "@password@";
+        message = ''
+          It's insecure to enter your password as cleartext.
+          Use `services.tau-tower.passwordFile`, instead.
+        '';
+      }
+      {
+        assertion = cfg.passwordFile != null;
+        message = ''
+          `services.tau-tower.passwordFile` must be set.
+        '';
+      }
+    ];
+
     # TODO: handle password file with configData
 
     process.argv = [
