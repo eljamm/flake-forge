@@ -75,17 +75,6 @@ in
   };
 
   config = {
-    assertions = [
-      {
-        assertion = cfg.settings.password == "@password@";
-        message = ''
-          It's insecure to enter your password as cleartext.
-
-          Use `services.tau-tower.passwordFile`, instead.
-        '';
-      }
-    ];
-
     # TODO: handle password file with configData
 
     process.argv = [
@@ -96,9 +85,6 @@ in
     systemd.service = {
       description = "Tau Webradio Server";
       serviceConfig = {
-        ExecStart = ''
-          ${lib.getExe cfg.package}
-        '';
         DynamicUser = true;
         User = "tau-tower";
         Group = "tau-tower";
