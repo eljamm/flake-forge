@@ -1,0 +1,11 @@
+services:
+  tau-tower:
+    image: localhost/tau-tower:latest
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    environment:
+      - TAU_USERNAME=tau
+      - TAU_PASSWORD=changeme
+    profiles:
+      - services
