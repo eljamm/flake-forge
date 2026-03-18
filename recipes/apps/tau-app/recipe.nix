@@ -34,6 +34,11 @@
 
   services.tau-tower = {
     command = pkgs.mypkgs.tau-tower;
+
+    configData."credstore/tau.PASSWORD" = {
+      source = lib.mkDefault "/etc/credstore/tau.PASSWORD";
+      path = "tau.PASSWORD";
+    };
   };
 
   programs = {

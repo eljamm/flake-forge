@@ -17,7 +17,7 @@ let
   settingsFormat = pkgs.formats.toml { };
   configFile = settingsFormat.generate "tower.toml" cfg.settings;
 
-  passwordFile = config.configData."secrets/password";
+  passwordData = config.configData."credstore/tau.PASSWORD";
 in
 {
   _class = "service";
@@ -94,7 +94,7 @@ in
     ];
 
     # TODO: handle password file with configData
-    tau-tower.passwordFile = lib.mkDefault passwordFile.source or null;
+    tau-tower.passwordFile = lib.mkDefault passwordData.path or null;
   }
   // lib.optionalAttrs (options ? systemd) {
     systemd.service = {
