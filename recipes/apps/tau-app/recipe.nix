@@ -59,12 +59,14 @@
         imports = [ pkgs.mypkgs.tau-tower.services.default ];
         tau-tower = {
           settings.username = "alice";
-          # WARN: Don't use this in production as it will copy the file to the
-          # Nix store. Instead, provide a string that contains an absolute path
-          # to a file that already exists on disk.
-          passwordFile = pkgs.writeText "password.txt" "superSecretPassword";
+          passwordFile = "/etc/credstore/tau.PASSWORD";
         };
       };
+
+      # WARN: !! Don't use this in production !!
+      # Instead, put the secrets directly in the systemd credentials store (`/etc/credstore/`, `/run/credstore/`, ...)
+      # For more information on this topic, see: <https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#ImportCredential=GLOB>
+      environment.etc."credstore/tau.PASSWORD".text = "superSecretPassword";
 
       environment.systemPackages = [
         pkgs.mypkgs.tau-radio
